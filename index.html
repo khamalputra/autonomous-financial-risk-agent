@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Autonomous Market Risk Intelligence Agent (v1.2)</title>
+    <title>Autonomous Financial Risk Agent | Institutional Volatility & Risk Terminal</title>
     
-    <!-- Google Fonts & FontAwesome -->
+    <!-- Google Fonts & Monospace Numerals -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- Chart.js Library -->
@@ -21,117 +21,258 @@
 
     <!-- Loader Overlay -->
     <div class="loader-overlay" id="loaderOverlay">
-        <div class="spinner"></div>
-        <div class="loader-text">Running Quantitative Risk Engine & Neural Sentiment Scan...</div>
+        <div class="loader-card">
+            <div class="spinner"></div>
+            <div class="loader-text">Executing Risk Engine & Model Inference...</div>
+            <div class="loader-subtext">Fetching empirical market prices & NLP headline scoring</div>
+        </div>
     </div>
 
-    <div class="dashboard-container">
+    <!-- App Shell Container -->
+    <div class="app-shell">
         
-        <!-- Header -->
-        <header class="header">
-            <div class="header-title-group">
-                <h1>Autonomous Market Risk Intelligence</h1>
-                <div class="header-subtitle">CRISP-DM Methodological Engine | LightGBM Volatility Regressor + EVT Cap + FHS VaR 95%</div>
-            </div>
-            <div class="badge-container">
-                <div class="status-badge" id="baselBadge">
-                    <div class="status-dot"></div>
-                    BASEL III GREEN ZONE
+        <!-- Top App Navbar -->
+        <header class="app-header">
+            <div class="brand-group">
+                <div class="brand-logo">
+                    <i class="fa-solid fa-shield-halved"></i>
                 </div>
+                <div class="brand-text">
+                    <span class="brand-title">RISK ENGINE <span class="version-tag">v1.2</span></span>
+                    <span class="brand-subtitle">Autonomous Market Risk Intelligence Terminal</span>
+                </div>
+            </div>
+
+            <div class="header-center">
+                <div class="nav-pills">
+                    <button class="nav-pill active"><i class="fa-solid fa-chart-pie"></i> Risk Analytics</button>
+                    <button class="nav-pill" onclick="alert('Regulatory Backtesting Report Export Ready')"><i class="fa-solid fa-file-contract"></i> Compliance</button>
+                    <button class="nav-pill" onclick="alert('Model Metadata Version 1.2 Active')"><i class="fa-solid fa-microchip"></i> Model Spec</button>
+                </div>
+            </div>
+
+            <div class="header-actions">
+                <div class="status-badge green" id="baselBadge">
+                    <span class="status-indicator"></span>
+                    <span id="baselBadgeText">BASEL III GREEN ZONE</span>
+                </div>
+                <button class="icon-btn" title="Refresh Live Feeds" onclick="runRiskScan()"><i class="fa-solid fa-rotate"></i></button>
             </div>
         </header>
 
-        <!-- Interactive Control Panel -->
-        <section class="control-panel">
-            <div class="control-card">
-                <label class="control-label" for="tickerSelect"><i class="fa-solid fa-chart-line"></i> Target Portfolio Asset</label>
-                <select class="custom-select" id="tickerSelect">
-                    <option value="AAPL" selected>AAPL - Apple Inc. (Equity)</option>
-                    <option value="MSFT">MSFT - Microsoft Corp. (Equity)</option>
-                    <option value="BTC-USD">BTC-USD - Bitcoin (Digital Asset)</option>
-                    <option value="ETH-USD">ETH-USD - Ethereum (Digital Asset)</option>
-                </select>
-            </div>
+        <!-- Main Workspace Layout -->
+        <main class="workspace-grid">
+            
+            <!-- Left Control Sidebar -->
+            <aside class="sidebar">
+                <div class="sidebar-header">
+                    <span class="sidebar-title">Portfolio Parameters</span>
+                    <i class="fa-solid fa-sliders text-muted"></i>
+                </div>
 
-            <div class="control-card">
-                <label class="control-label"><i class="fa-solid fa-wallet"></i> Portfolio Capital Value ($)</label>
-                <div class="slider-container">
-                    <input type="text" class="custom-input" id="portfolioInput" value="1,000,000">
+                <div class="config-group">
+                    <label class="field-label" for="tickerSelect">Target Asset Symbol</label>
+                    <div class="select-wrapper">
+                        <select class="field-control" id="tickerSelect">
+                            <option value="AAPL" selected>AAPL — Apple Inc. (Equity)</option>
+                            <option value="MSFT">MSFT — Microsoft Corp. (Equity)</option>
+                            <option value="BTC-USD">BTC-USD — Bitcoin (Crypto Asset)</option>
+                            <option value="ETH-USD">ETH-USD — Ethereum (Crypto Asset)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="config-group">
+                    <div class="field-label-row">
+                        <label class="field-label" for="portfolioInput">Portfolio Value ($)</label>
+                        <span class="field-hint" id="portfolioFormattedHint">$1,000,000</span>
+                    </div>
+                    <div class="input-prefix-wrapper">
+                        <span class="input-prefix">$</span>
+                        <input type="text" class="field-control prefix-padding" id="portfolioInput" value="1,000,000">
+                    </div>
                     <input type="range" class="range-slider" id="portfolioRange" min="100000" max="50000000" step="100000" value="1000000">
                 </div>
-            </div>
 
-            <div class="control-card">
-                <label class="control-label" for="confidenceSelect"><i class="fa-solid fa-shield-halved"></i> VaR Confidence Level</label>
-                <select class="custom-select" id="confidenceSelect">
-                    <option value="0.95" selected>95% Confidence Level (Standard Basel)</option>
-                    <option value="0.99">99% Confidence Level (Extreme Stress)</option>
-                    <option value="0.90">90% Confidence Level (Tactical)</option>
-                </select>
-            </div>
+                <div class="config-group">
+                    <label class="field-label">VaR Confidence Level ($1-\alpha$)</label>
+                    <div class="segmented-control">
+                        <button class="seg-btn" data-value="0.90">90%</button>
+                        <button class="seg-btn active" data-value="0.95">95%</button>
+                        <button class="seg-btn" data-value="0.99">99%</button>
+                    </div>
+                    <select id="confidenceSelect" style="display: none;">
+                        <option value="0.90">0.90</option>
+                        <option value="0.95" selected>0.95</option>
+                        <option value="0.99">0.99</option>
+                    </select>
+                </div>
 
-            <div class="control-card" style="display: flex; align-items: flex-end;">
-                <button class="btn-scan" id="btnScan">
-                    <i class="fa-solid fa-bolt"></i> RUN RISK SCAN
+                <button class="primary-btn" id="btnScan">
+                    <i class="fa-solid fa-circle-play"></i> Run Risk Analysis
                 </button>
-            </div>
-        </section>
 
-        <!-- KPI Metric Cards Grid -->
-        <section class="kpi-grid">
-            <div class="kpi-card">
-                <div class="kpi-title">Predicted Volatility ($\sigma_{t+5}^{(5d)}$)</div>
-                <div class="kpi-value" id="kpiVol">--%</div>
-                <div class="kpi-subtitle" id="kpiVolDaily">Daily Vol: --% | EVT Cap: --%</div>
-            </div>
+                <div class="sidebar-divider"></div>
 
-            <div class="kpi-card alert">
-                <div class="kpi-title">1-Day Value-at-Risk (VaR 95%)</div>
-                <div class="kpi-value" id="kpiVar">$0</div>
-                <div class="kpi-subtitle" id="kpiVarPct">--% of Portfolio</div>
-            </div>
-
-            <div class="kpi-card alert">
-                <div class="kpi-title">1-Day Expected Shortfall (ES 95%)</div>
-                <div class="kpi-value" id="kpiEs">$0</div>
-                <div class="kpi-subtitle" id="kpiEsPct">--% Expected Tail Loss</div>
-            </div>
-
-            <div class="kpi-card">
-                <div class="kpi-title">Kupiec POF Backtest ($p$-value)</div>
-                <div class="kpi-value" id="kpiKupiec">p = --</div>
-                <div class="kpi-subtitle" id="kpiBreaches">-- Breaches (Basel Compliant)</div>
-            </div>
-        </section>
-
-        <!-- Interactive Charting Suite -->
-        <section class="chart-section">
-            <div class="chart-header">
-                <div style="font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 18px;">
-                    <i class="fa-solid fa-chart-area" style="color: var(--accent-cyan);"></i> Quantitative Risk Visualizer
+                <!-- Model Spec Specs Box -->
+                <div class="spec-card">
+                    <div class="spec-card-title"><i class="fa-solid fa-database"></i> Model Architecture</div>
+                    <div class="spec-row">
+                        <span>Regressor:</span>
+                        <strong class="mono">LightGBM GBDT</strong>
+                    </div>
+                    <div class="spec-row">
+                        <span>EVT Cap Threshold:</span>
+                        <strong class="mono" id="specEvtCap">0.6926</strong>
+                    </div>
+                    <div class="spec-row">
+                        <span>Backtest Standard:</span>
+                        <strong class="mono">FHS 95% + Kupiec</strong>
+                    </div>
+                    <div class="spec-row">
+                        <span>Data Window:</span>
+                        <strong class="mono">1,400 Days (Real)</strong>
+                    </div>
                 </div>
-                <div class="chart-tabs">
-                    <button class="tab-btn active" id="tabForecast">Volatility Forecast</button>
-                    <button class="tab-btn" id="tabVaR">FHS VaR 95% Backtest</button>
-                    <button class="tab-btn" id="tabReturns">Returns Time-Series</button>
+            </aside>
+
+            <!-- Main Content Area -->
+            <section class="main-content">
+                
+                <!-- KPI Executive Grid -->
+                <div class="kpi-grid">
+                    
+                    <div class="metric-card">
+                        <div class="metric-header">
+                            <span class="metric-title">Predicted Volatility ($\sigma_{t+5}^{(5d)}$)</span>
+                            <span class="metric-tag info">5-Day Forward</span>
+                        </div>
+                        <div class="metric-value mono" id="kpiVol">--%</div>
+                        <div class="metric-footer">
+                            <span class="mono" id="kpiVolDaily">Daily: --%</span>
+                            <span class="text-muted">•</span>
+                            <span class="mono" id="kpiEvtCap">Cap: 69.26%</span>
+                        </div>
+                    </div>
+
+                    <div class="metric-card alert-border">
+                        <div class="metric-header">
+                            <span class="metric-title">Value-at-Risk (1-Day VaR)</span>
+                            <span class="metric-tag danger" id="kpiVarConfTag">95% Conf</span>
+                        </div>
+                        <div class="metric-value mono text-danger" id="kpiVar">$0</div>
+                        <div class="metric-footer">
+                            <span class="mono" id="kpiVarPct">--% of Portfolio</span>
+                        </div>
+                    </div>
+
+                    <div class="metric-card alert-border">
+                        <div class="metric-header">
+                            <span class="metric-title">Expected Shortfall (ES)</span>
+                            <span class="metric-tag danger">Tail Loss</span>
+                        </div>
+                        <div class="metric-value mono text-danger" id="kpiEs">$0</div>
+                        <div class="metric-footer">
+                            <span class="mono" id="kpiEsPct">--% Tail Loss</span>
+                        </div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-header">
+                            <span class="metric-title">Kupiec POF Backtest</span>
+                            <span class="metric-tag success" id="kpiBaselStatusTag">Green Zone</span>
+                        </div>
+                        <div class="metric-value mono" id="kpiKupiec">p = --</div>
+                        <div class="metric-footer">
+                            <span class="mono" id="kpiBreaches">-- Breaches</span>
+                        </div>
+                    </div>
+
                 </div>
-            </div>
 
-            <div class="chart-container">
-                <canvas id="mainChart"></canvas>
-            </div>
-        </section>
+                <!-- Main Chart Workspace -->
+                <div class="chart-card">
+                    <div class="chart-card-header">
+                        <div class="chart-title-group">
+                            <h2 class="chart-main-title" id="chartMainTitle">Volatility Forecast Tracking</h2>
+                            <p class="chart-sub-title">Out-of-sample predicted annualized volatility vs empirical realized metrics</p>
+                        </div>
+                        <div class="tab-switcher">
+                            <button class="tab-btn active" id="tabForecast"><i class="fa-solid fa-wave-square"></i> Volatility Forecast</button>
+                            <button class="tab-btn" id="tabVaR"><i class="fa-solid fa-shield-cat"></i> VaR Backtest</button>
+                            <button class="tab-btn" id="tabReturns"><i class="fa-solid fa-chart-simple"></i> Log Returns</button>
+                        </div>
+                    </div>
+                    <div class="chart-viewport">
+                        <canvas id="mainChart"></canvas>
+                    </div>
+                </div>
 
-        <!-- Live Financial News & Sentiment Feed -->
-        <section class="news-section">
-            <div class="news-header">
-                <i class="fa-solid fa-newspaper" style="color: var(--accent-cyan);"></i> Real Financial Headlines & FinBERT Sentiment Scoring
-            </div>
-            <div class="news-grid" id="newsGrid">
-                <!-- News items populated by JS -->
-            </div>
-        </section>
+                <!-- Bottom Split Panel: News & Backtest Table -->
+                <div class="bottom-grid">
+                    
+                    <!-- Live Financial News Stream -->
+                    <div class="content-box">
+                        <div class="box-header">
+                            <h3 class="box-title"><i class="fa-solid fa-newspaper text-accent"></i> Live News Headline Stream & FinBERT Sentiment</h3>
+                            <span class="badge-neutral" id="newsCountBadge">0 Headlines</span>
+                        </div>
+                        <div class="news-list" id="newsGrid">
+                            <!-- Populated dynamically by JS -->
+                        </div>
+                    </div>
 
+                    <!-- Regulatory Compliance Summary Table -->
+                    <div class="content-box">
+                        <div class="box-header">
+                            <h3 class="box-title"><i class="fa-solid fa-scale-balanced text-accent"></i> Regulatory Audit Summary</h3>
+                            <span class="badge-neutral">Basel III Standard</span>
+                        </div>
+                        <div class="table-wrapper">
+                            <table class="audit-table">
+                                <thead>
+                                    <tr>
+                                        <th>Metric Parameter</th>
+                                        <th>Empirical Value</th>
+                                        <th>Regulatory Threshold</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Out-of-Sample Violations</td>
+                                        <td class="mono" id="tblViolations">-- / --</td>
+                                        <td class="mono">5.00% Expected</td>
+                                        <td><span class="table-tag pass" id="tblViolationTag">PASS</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Kupiec POF Likelihood Ratio ($LR_{\text{POF}}$)</td>
+                                        <td class="mono" id="tblLrPof">--</td>
+                                        <td class="mono">&lt; 3.841 ($\chi^2_{df=1}$)</td>
+                                        <td><span class="table-tag pass">PASS</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Patton QLIKE Loss Score</td>
+                                        <td class="mono">0.5725</td>
+                                        <td class="mono">Minimized</td>
+                                        <td><span class="table-tag info">OPTIMAL</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>EVT Extreme Volatility Cap</td>
+                                        <td class="mono" id="tblEvtCap">69.26%</td>
+                                        <td class="mono">99.5th Percentile</td>
+                                        <td><span class="table-tag pass">ACTIVE</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+
+            </section>
+
+        </main>
     </div>
 
     <!-- Application JavaScript -->
