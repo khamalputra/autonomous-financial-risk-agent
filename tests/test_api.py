@@ -39,3 +39,14 @@ def test_analyze_risk_endpoint():
     assert "daily_es_usd" in data
     assert "kupiec_p_value" in data
     assert data["basel_zone"] in ["GREEN", "YELLOW", "RED"]
+
+def test_export_pdf_endpoint():
+    payload = {
+        "ticker": "AAPL",
+        "portfolio_value": 1000000.0,
+        "confidence_level": 0.95
+    }
+    response = client.post("/api/v1/risk/export-pdf", json=payload)
+    assert response.status_code == 200
+    assert response.headers["content-type"] == "application/pdf"
+    assert len(response.content) > 1000

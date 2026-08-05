@@ -1,8 +1,10 @@
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, HTTPException, Query, Response
 from typing import List, Dict, Any
+from datetime import datetime
 
 from app.api.v1.schemas.risk import RiskAnalysisRequest, RiskAnalysisResponse
 from app.services.risk_engine import risk_service
+from app.services.pdf_generator import PDFReportGenerator
 from app.core.config import settings
 
 router = APIRouter()
@@ -19,6 +21,29 @@ async def analyze_risk(request: RiskAnalysisRequest):
         return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Risk engine processing error: {str(e)}")
+
+@router.post("/risk/export-pdf")
+async def export_risk_pdf(request: RiskAnalysisRequest):
+    """Generates and downloads a formal Basel III Market Risk Audit PDF Report."""
+    try:
+        risk_data = risk_service.analyze_risk(
+            ticker=request.ticker,
+            portfolio_value=request.portfolio_value,
+            confidence_level=request.confidence_level
+        )
+        pdf_bytes = PDFReportGenerator.generate_risk_report(risk_data)
+        
+        filename = f"Risk_Intelligence_Report_{request.ticker}_{datetime.now().strftime('%Y-%m-%d')}.pdf"
+        
+        return Response(
+            content=pdf_bytes,
+            media_type="application/pdf",
+            headers={
+                "Content-Disposition": f"attachment; filename={filename}"
+            }
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"PDF generation error: {str(e)}")
 
 @router.get("/risk/metadata")
 async def get_metadata():

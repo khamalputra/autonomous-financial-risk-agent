@@ -166,6 +166,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const portfolioFormattedHint = document.getElementById('portfolioFormattedHint');
     const confidenceSelect = document.getElementById('confidenceSelect');
     const btnScan = document.getElementById('btnScan');
+    const btnExportPdf = document.getElementById('btnExportPdf');
     const loaderOverlay = document.getElementById('loaderOverlay');
 
     // Language Switcher Buttons
@@ -286,7 +287,6 @@ document.addEventListener('DOMContentLoaded', () => {
             btn.classList.add('active');
             const val = btn.getAttribute('data-value');
             confidenceSelect.value = val;
-            // NOTE: Automatic runRiskScan() removed so user must explicitly click "Run Risk Analysis" button.
         });
     });
 
@@ -311,6 +311,9 @@ document.addEventListener('DOMContentLoaded', () => {
     tabReturns.addEventListener('click', () => switchTab('returns'));
 
     btnScan.addEventListener('click', runRiskScan);
+    if (btnExportPdf) {
+        btnExportPdf.addEventListener('click', exportPdfReport);
+    }
 
     // Initial Language Setup & Load
     setLanguage(currentLang);
@@ -348,6 +351,45 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (err) {
             console.error("Risk scan failed:", err);
             alert("Failed to analyze market risk: " + err.message);
+        } finally {
+            showLoader(false);
+        }
+    }
+
+    async function exportPdfReport() {
+        showLoader(true);
+        const ticker = tickerSelect.value;
+        const portfolioValue = parseFloat(portfolioRange.value);
+        const confidenceLevel = parseFloat(confidenceSelect.value);
+
+        try {
+            const response = await fetch('/api/v1/risk/export-pdf', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    ticker: ticker,
+                    portfolio_value: portfolioValue,
+                    confidence_level: confidenceLevel
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error(`Failed to generate PDF: HTTP ${response.status}`);
+            }
+
+            const blob = await response.blob();
+            const downloadUrl = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = downloadUrl;
+            a.download = `Risk_Intelligence_Report_${ticker}_${new Date().toISOString().split('T')[0]}.pdf`;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            window.URL.revokeObjectURL(downloadUrl);
+
+        } catch (err) {
+            console.error("PDF Export failed:", err);
+            alert("Failed to export PDF audit report: " + err.message);
         } finally {
             showLoader(false);
         }
@@ -654,7 +696,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function escapeHtml(text) {
         return text.replace(/[&<>"']/g, function(m) {
-            return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[m];
+            return { '&': '&amp;', '<': '&lt>', '"': '&quot;', "'": '&#039;' }[m];
         });
     }
 
