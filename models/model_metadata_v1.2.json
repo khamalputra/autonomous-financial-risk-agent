@@ -1,0 +1,35 @@
+{
+    "model_name": "LightGBM_Volatility_Regressor",
+    "version": "1.2",
+    "created_at": "2026-08-05T13:18:48.835257",
+    "features": [
+        "return_lag1",
+        "vol_7d",
+        "vol_14d",
+        "vol_30d",
+        "rsi_14",
+        "macd",
+        "finbert_sentiment"
+    ],
+    "evt_cap_threshold": 0.6926124655311019,
+    "best_hyperparameters": {
+        "n_estimators": 150,
+        "learning_rate": 0.03,
+        "num_leaves": 15,
+        "max_depth": 6,
+        "subsample": 0.8,
+        "colsample_bytree": 0.8,
+        "reg_alpha": 0.1,
+        "reg_lambda": 1.0,
+        "verbose": -1,
+        "random_state": 42,
+        "objective": "regression",
+        "metric": "rmse"
+    },
+    "test_metrics": {
+        "rmse": 0.11419333992943466,
+        "mae": 0.08946422497359907,
+        "qlike": 0.5659306106650258,
+        "kupiec_p_value": 2.8772484395034326e-10
+    }
+}
