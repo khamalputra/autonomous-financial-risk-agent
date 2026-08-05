@@ -87,6 +87,7 @@ class RiskEngineService:
         """
         Computes 1-lag shifted features and target realized volatility according to
         Andersen et al. (2003) zero-mean realized variance: sigma_5d = sqrt((1/5 * sum r_t^2) * 252).
+        Preserves most recent trading day up to today by dropping NaNs only from feature columns.
         """
         log_returns = np.log(df_prices / df_prices.shift(1)).dropna()
         if target_ticker not in log_returns.columns:
@@ -130,7 +131,10 @@ class RiskEngineService:
                 df_feat['real_neg_ratio'] = float(neg_ratio)
                 
         df_feat['real_sent_vol_inter'] = df_feat['real_neg_ratio'] * df_feat['vol_7d']
-        return log_returns, df_feat.dropna()
+        
+        # CRITICAL FIX: Drop NaNs ONLY from feature columns to preserve latest trading days up to today
+        df_feat_clean = df_feat.dropna(subset=self.feature_cols)
+        return log_returns, df_feat_clean
 
     def analyze_risk(self, ticker="AAPL", portfolio_value=1000000.0, confidence_level=0.95):
         """Runs institutional quantitative risk engine pipeline."""
