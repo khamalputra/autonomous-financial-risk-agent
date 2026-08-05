@@ -1,4 +1,164 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // i18n Translation Dictionary
+    const translations = {
+        en: {
+            brand_subtitle: "Autonomous Market Risk Intelligence Terminal",
+            nav_risk: "Risk Analytics",
+            nav_compliance: "Compliance",
+            nav_modelspec: "Model Spec",
+            sidebar_title: "Portfolio Parameters",
+            target_asset: "Target Asset Symbol",
+            portfolio_val: "Portfolio Value (USD)",
+            confidence_lbl: "VaR Confidence Level",
+            btn_scan: "Run Risk Analysis",
+            model_arch: "Model Architecture",
+            regressor_lbl: "Regressor:",
+            evt_cap_lbl: "EVT Cap Threshold:",
+            backtest_std: "Backtest Standard:",
+            data_window: "Data Window:",
+            data_window_val: "1,400 Days (Real)",
+            kpi_pred_vol: "Predicted Volatility (5-Day Forward)",
+            tag_5d_vol: "5D Volatility",
+            kpi_var: "Value-at-Risk (1-Day VaR)",
+            kpi_es: "Expected Shortfall (ES)",
+            tag_tail_loss: "Tail Loss",
+            kpi_kupiec: "Kupiec POF Backtest",
+            chart_subtitle: "Out-of-sample predicted annualized volatility vs empirical realized metrics",
+            tab_forecast: "Volatility Forecast",
+            tab_var: "VaR Backtest",
+            tab_returns: "Log Returns",
+            news_header: "Live News Headline Stream & FinBERT Sentiment",
+            audit_header: "Regulatory Audit Summary",
+            th_param: "Metric Parameter",
+            th_emp: "Empirical Value",
+            th_thresh: "Regulatory Threshold",
+            th_status: "Status",
+            td_violations: "Out-of-Sample Violations",
+            td_5pct_expected: "5.00% Expected",
+            td_kupiec_lr: "Kupiec POF Likelihood Ratio (LR POF)",
+            td_qlike: "Patton QLIKE Loss Score",
+            td_minimized: "Minimized",
+            td_evt_cap: "EVT Extreme Volatility Cap",
+            td_995_percentile: "99.5th Percentile",
+            comp_header: "Basel III Regulatory Backtest & Compliance Matrix",
+            comp_desc: "Multi-quantile Likelihood Ratio tests evaluated against the Basel Committee Traffic Light System.",
+            export_pdf: "Export PDF Audit",
+            th_conf: "Confidence Level (1-α)",
+            th_exp_rate: "Expected Violation Rate",
+            th_obs_viol: "Observed Violations",
+            th_obs_rate: "Observed Rate",
+            th_kupiec_lr_stat: "Kupiec POF LR Stat",
+            th_pval: "p-Value",
+            th_basel_zone: "Basel Traffic Zone",
+            stress_header: "Historical Extreme Event Stress Scenarios",
+            badge_hypo_shocks: "Hypothetical Shocks",
+            th_stress_scenario: "Stress Scenario Name",
+            th_sim_shock: "Simulated Return Shock",
+            th_stress_vol: "Stressed Volatility Prediction",
+            th_stress_loss: "Stressed Portfolio Loss ($)",
+            th_cap_impact: "Capital Reserve Impact",
+            scen_lehman: "2008 Lehman Liquidity Crunch",
+            scen_covid: "2020 COVID Market Panic Shock",
+            scen_crypto: "Crypto Liquidity Deleveraging Shock",
+            spec_header: "LightGBM Hyperparameters & Setup",
+            th_hyperparam: "Hyperparameter",
+            th_cfg_val: "Configured Value",
+            th_arch_func: "Architectural Function",
+            func_mse: "Mean Squared Error Loss Optimization",
+            func_gbdt: "Gradient Boosted Decision Trees",
+            func_trees: "Number of Sequential Trees Fitted",
+            func_lr: "Step-size Shrinkage Rate",
+            func_depth: "Tree Structural Complexity Bounds",
+            func_reg: "L1 & L2 Regularization Penalties",
+            feat_imp_header: "Predictor Feature Gain Importance",
+            badge_9feat: "9 Features",
+            loader_text: "Executing Risk Engine & Model Inference...",
+            loader_subtext: "Fetching empirical market prices & NLP headline scoring",
+            title_forecast: "Volatility Forecast Tracking",
+            title_var: "Filtered Historical Simulation (FHS) VaR Regulatory Backtest",
+            title_returns: "Daily Log-Return Dispersion"
+        },
+        id: {
+            brand_subtitle: "Terminal Intelijen Risiko Pasar Otonom",
+            nav_risk: "Analisis Risiko",
+            nav_compliance: "Kepatuhan Regulasi",
+            nav_modelspec: "Spesifikasi Model",
+            sidebar_title: "Parameter Portofolio",
+            target_asset: "Simbol Aset Target",
+            portfolio_val: "Nilai Portofolio (USD)",
+            confidence_lbl: "Tingkat Konfidensi VaR",
+            btn_scan: "Jalankan Analisis Risiko",
+            model_arch: "Arsitektur Model",
+            regressor_lbl: "Model Regresi:",
+            evt_cap_lbl: "Batas Ambang EVT:",
+            backtest_std: "Standar Backtest:",
+            data_window: "Jendela Data:",
+            data_window_val: "1.400 Hari (Riil)",
+            kpi_pred_vol: "Volatilitas Terprediksi (5-Hari Ke Depan)",
+            tag_5d_vol: "Volatilitas 5D",
+            kpi_var: "Value-at-Risk (VaR 1-Hari)",
+            kpi_es: "Expected Shortfall (ES)",
+            tag_tail_loss: "Ekor Risiko",
+            kpi_kupiec: "Uji Backtest Kupiec POF",
+            chart_subtitle: "Volatilitas terprediksi out-of-sample vs metrik realisasi empiris",
+            tab_forecast: "Prediksi Volatilitas",
+            tab_var: "Backtest VaR",
+            tab_returns: "Return Harian",
+            news_header: "Berita Keuangan Langsung & Skor Sentimen FinBERT",
+            audit_header: "Ringkasan Audit Regulasi",
+            th_param: "Parameter Metrik",
+            th_emp: "Nilai Empiris",
+            th_thresh: "Ambang Batas Regulasi",
+            th_status: "Status",
+            td_violations: "Pelanggaran Out-of-Sample",
+            td_5pct_expected: "5,00% Ekspektasi",
+            td_kupiec_lr: "Rasio Likelihood Kupiec POF (LR POF)",
+            td_qlike: "Skor Kerugian Patton QLIKE",
+            td_minimized: "Terminimalkan",
+            td_evt_cap: "Batas Volatilitas Ekstrim EVT",
+            td_995_percentile: "Persentil ke-99,5",
+            comp_header: "Matriks Kepatuhan & Backtest Regulasi Basel III",
+            comp_desc: "Uji Likelihood Ratio multikuantil terhadap Sistem Lampu Lalu Lintas Komite Basel.",
+            export_pdf: "Ekspor Laporan PDF",
+            th_conf: "Tingkat Konfidensi (1-α)",
+            th_exp_rate: "Tingkat Pelanggaran Ekspektasi",
+            th_obs_viol: "Pelanggaran Terobservasi",
+            th_obs_rate: "Tingkat Terobservasi",
+            th_kupiec_lr_stat: "Statistik LR Kupiec POF",
+            th_pval: "Nilai-p",
+            th_basel_zone: "Zona Lalu Lintas Basel",
+            stress_header: "Skenario Stress Testing Peristiwa Ekstrim Historis",
+            badge_hypo_shocks: "Guncangan Hipotesis",
+            th_stress_scenario: "Nama Skenario Stress",
+            th_sim_shock: "Simulasi Guncangan Return",
+            th_stress_vol: "Prediksi Volatilitas Tertekankan",
+            th_stress_loss: "Kerugian Portofolio Tertekankan ($)",
+            th_cap_impact: "Dampak Cadangan Modal",
+            scen_lehman: "Krisus Likuiditas Lehman 2008",
+            scen_covid: "Guncangan Panik Pasar COVID 2020",
+            scen_crypto: "Guncangan Deleveraging Likuiditas Kripto",
+            spec_header: "Setup & Hiperparameter LightGBM",
+            th_hyperparam: "Hiperparameter",
+            th_cfg_val: "Nilai Terkonfigurasi",
+            th_arch_func: "Fungsi Arsitektural",
+            func_mse: "Optimasi Kerugian Mean Squared Error",
+            func_gbdt: "Pohon Keputusan Ter-Boost (GBDT)",
+            func_trees: "Jumlah Pohon Sekuensial Terpasang",
+            func_lr: "Laju Penyusutan Ukuran Langkah",
+            func_depth: "Batas Kompleksitas Struktur Pohon",
+            func_reg: "Penalti Regulerisasi L1 & L2",
+            feat_imp_header: "Tingkat Kepentingan Fitur Prediktor (Gain Importance)",
+            badge_9feat: "9 Fitur",
+            loader_text: "Mengeksekusi Risk Engine & Inferensi Model...",
+            loader_subtext: "Mengambil harga pasar empiris & skor sentimen NLP",
+            title_forecast: "Pelacakan Prediksi Volatilitas",
+            title_var: "Backtest Regulasi Filtered Historical Simulation (FHS) VaR",
+            title_returns: "Dispersi Return Harian"
+        }
+    };
+
+    let currentLang = localStorage.getItem('preferred_language') || 'en';
+
     // DOM Elements
     const tickerSelect = document.getElementById('tickerSelect');
     const portfolioRange = document.getElementById('portfolioRange');
@@ -7,6 +167,36 @@ document.addEventListener('DOMContentLoaded', () => {
     const confidenceSelect = document.getElementById('confidenceSelect');
     const btnScan = document.getElementById('btnScan');
     const loaderOverlay = document.getElementById('loaderOverlay');
+
+    // Language Switcher Buttons
+    const langEN = document.getElementById('langEN');
+    const langID = document.getElementById('langID');
+
+    langEN.addEventListener('click', () => setLanguage('en'));
+    langID.addEventListener('click', () => setLanguage('id'));
+
+    function setLanguage(lang) {
+        currentLang = lang;
+        localStorage.setItem('preferred_language', lang);
+        langEN.classList.toggle('active', lang === 'en');
+        langID.classList.toggle('active', lang === 'id');
+        applyLanguage(lang);
+    }
+
+    function applyLanguage(lang) {
+        const dict = translations[lang] || translations.en;
+        document.querySelectorAll('[data-i18n]').forEach(el => {
+            const key = el.getAttribute('data-i18n');
+            if (dict[key]) {
+                el.textContent = dict[key];
+            }
+        });
+
+        if (cachedRiskData) {
+            updateKPIs(cachedRiskData);
+            switchTab(activeTab);
+        }
+    }
 
     // Navigation Pills
     const navRiskAnalytics = document.getElementById('navRiskAnalytics');
@@ -122,7 +312,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     btnScan.addEventListener('click', runRiskScan);
 
-    // Initial Load
+    // Initial Language Setup & Load
+    setLanguage(currentLang);
     runRiskScan();
 
     async function runRiskScan() {
@@ -163,38 +354,44 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function updateKPIs(data) {
+        const dict = translations[currentLang] || translations.en;
         kpiVol.textContent = (data.predicted_volatility_annualized * 100).toFixed(2) + '%';
-        kpiVolDaily.textContent = `Daily: ${(data.predicted_volatility_daily * 100).toFixed(2)}%`;
+        kpiVolDaily.textContent = `${currentLang === 'id' ? 'Harian' : 'Daily'}: ${(data.predicted_volatility_daily * 100).toFixed(2)}%`;
         const capPct = (data.evt_cap_threshold * 100).toFixed(2) + '%';
-        kpiEvtCap.textContent = `Cap: ${capPct}`;
+        kpiEvtCap.textContent = `${currentLang === 'id' ? 'Batas' : 'Cap'}: ${capPct}`;
         specEvtCap.textContent = capPct;
         tblEvtCap.textContent = capPct;
 
         kpiVar.textContent = '$' + data.daily_var_usd.toLocaleString('en-US');
-        kpiVarPct.textContent = `${data.daily_var_pct}% of Portfolio`;
-        kpiVarConfTag.textContent = `${(data.confidence_level * 100).toFixed(0)}% Conf`;
+        kpiVarPct.textContent = `${data.daily_var_pct}% ${currentLang === 'id' ? 'dari Portofolio' : 'of Portfolio'}`;
+        kpiVarConfTag.textContent = `${(data.confidence_level * 100).toFixed(0)}% ${currentLang === 'id' ? 'Konf' : 'Conf'}`;
 
         kpiEs.textContent = '$' + data.daily_es_usd.toLocaleString('en-US');
-        kpiEsPct.textContent = `${data.daily_es_pct}% Tail Loss`;
+        kpiEsPct.textContent = `${data.daily_es_pct}% ${currentLang === 'id' ? 'Ekor Risiko' : 'Tail Loss'}`;
 
         kpiKupiec.textContent = `p = ${data.kupiec_p_value.toFixed(4)}`;
-        kpiBreaches.textContent = `${data.var_violations} / ${data.total_observations} Breaches (${data.observed_violation_rate}%)`;
+        kpiBreaches.textContent = `${data.var_violations} / ${data.total_observations} ${currentLang === 'id' ? 'Pelanggaran' : 'Breaches'} (${data.observed_violation_rate}%)`;
 
         tblViolations.textContent = `${data.var_violations} / ${data.total_observations}`;
         tblLrPof.textContent = data.kupiec_pof_stat.toFixed(4);
 
         // Basel Zone Badge
         const zone = data.basel_zone;
-        baselBadgeText.textContent = `BASEL III ${zone} ZONE`;
+        let zoneLabel = `BASEL III ${zone} ZONE`;
+        if (currentLang === 'id') {
+            const idZone = zone === 'GREEN' ? 'HIJAU' : (zone === 'YELLOW' ? 'KUNING' : 'MERAH');
+            zoneLabel = `BASEL III ZONA ${idZone}`;
+        }
+        baselBadgeText.textContent = zoneLabel;
         baselBadge.className = 'status-badge ' + (zone === 'GREEN' ? 'green' : (zone === 'YELLOW' ? 'amber' : 'red'));
-        kpiBaselStatusTag.textContent = `${zone} Zone`;
+        kpiBaselStatusTag.textContent = currentLang === 'id' ? `Zona ${zone === 'GREEN' ? 'Hijau' : zone}` : `${zone} Zone`;
         kpiBaselStatusTag.className = 'metric-tag ' + (zone === 'GREEN' ? 'success' : (zone === 'YELLOW' ? 'info' : 'danger'));
 
         if (data.kupiec_p_value > 0.05) {
-            tblViolationTag.textContent = "PASS";
+            tblViolationTag.textContent = currentLang === 'id' ? "LOLOS" : "PASS";
             tblViolationTag.className = "table-tag pass";
         } else {
-            tblViolationTag.textContent = "FAIL";
+            tblViolationTag.textContent = currentLang === 'id' ? "GAGAL" : "FAIL";
             tblViolationTag.className = "table-tag danger";
         }
     }
@@ -206,7 +403,7 @@ document.addEventListener('DOMContentLoaded', () => {
         compPval95.textContent = data.kupiec_p_value.toFixed(4);
 
         const zone = data.basel_zone;
-        compZoneTag95.textContent = `${zone} ZONE`;
+        compZoneTag95.textContent = currentLang === 'id' ? `ZONA ${zone === 'GREEN' ? 'HIJAU' : zone}` : `${zone} ZONE`;
         compZoneTag95.className = 'table-tag ' + (zone === 'GREEN' ? 'pass' : (zone === 'YELLOW' ? 'info' : 'danger'));
 
         const pVal = data.portfolio_value;
@@ -225,12 +422,13 @@ document.addEventListener('DOMContentLoaded', () => {
         tabVaR.classList.toggle('active', tabName === 'var');
         tabReturns.classList.toggle('active', tabName === 'returns');
 
+        const dict = translations[currentLang] || translations.en;
         if (tabName === 'forecast') {
-            chartMainTitle.textContent = "Volatility Forecast Tracking";
+            chartMainTitle.textContent = dict.title_forecast;
         } else if (tabName === 'var') {
-            chartMainTitle.textContent = "Filtered Historical Simulation (FHS) VaR Regulatory Backtest";
+            chartMainTitle.textContent = dict.title_var;
         } else {
-            chartMainTitle.textContent = `${tickerSelect.value} Daily Log-Return Dispersion`;
+            chartMainTitle.textContent = `${tickerSelect.value} ${dict.title_returns}`;
         }
 
         if (cachedRiskData) {
@@ -245,6 +443,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const dates = data.time_series.dates;
+        const dict = translations[currentLang] || translations.en;
 
         if (tab === 'forecast') {
             currentChart = new Chart(ctx, {
@@ -253,7 +452,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     labels: dates,
                     datasets: [
                         {
-                            label: 'Predicted Volatility (LightGBM + EVT)',
+                            label: currentLang === 'id' ? 'Volatilitas Terprediksi (LightGBM + EVT)' : 'Predicted Volatility (LightGBM + EVT)',
                             data: data.time_series.predicted_volatility,
                             borderColor: '#2563EB',
                             borderWidth: 2,
@@ -262,7 +461,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             tension: 0.1
                         },
                         {
-                            label: `EVT Cap Boundary (${(data.evt_cap_threshold * 100).toFixed(2)}%)`,
+                            label: `${currentLang === 'id' ? 'Batas Ambang EVT' : 'EVT Cap Boundary'} (${(data.evt_cap_threshold * 100).toFixed(2)}%)`,
                             data: Array(dates.length).fill(data.evt_cap_threshold),
                             borderColor: '#94A3B8',
                             borderWidth: 1.5,
@@ -285,7 +484,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     labels: dates,
                     datasets: [
                         {
-                            label: 'Daily Log Return (r_t)',
+                            label: currentLang === 'id' ? 'Return Harian (r_t)' : 'Daily Log Return (r_t)',
                             data: data.time_series.returns,
                             borderColor: '#0284C7',
                             borderWidth: 1,
@@ -293,7 +492,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             fill: false
                         },
                         {
-                            label: `FHS ${(data.confidence_level * 100).toFixed(0)}% VaR Boundary`,
+                            label: `FHS ${(data.confidence_level * 100).toFixed(0)}% ${currentLang === 'id' ? 'Batas VaR' : 'VaR Boundary'}`,
                             data: data.time_series.var_limits,
                             borderColor: '#DC2626',
                             borderWidth: 1.5,
@@ -301,7 +500,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             fill: false
                         },
                         {
-                            label: 'VaR Breach (Violation)',
+                            label: currentLang === 'id' ? 'Pelanggaran VaR (Breach)' : 'VaR Breach (Violation)',
                             data: breachData,
                             backgroundColor: '#DC2626',
                             borderColor: '#DC2626',
@@ -320,7 +519,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     labels: dates,
                     datasets: [
                         {
-                            label: `${data.ticker} Daily Return`,
+                            label: `${data.ticker} ${currentLang === 'id' ? 'Return Harian' : 'Daily Return'}`,
                             data: data.time_series.returns,
                             borderColor: '#1E40AF',
                             borderWidth: 1.2,
@@ -348,7 +547,7 @@ document.addEventListener('DOMContentLoaded', () => {
             data: {
                 labels: features,
                 datasets: [{
-                    label: 'Gain Importance Score',
+                    label: currentLang === 'id' ? 'Skor Kepentingan Gain' : 'Gain Importance Score',
                     data: gains,
                     backgroundColor: '#2563EB',
                     borderRadius: 4
@@ -419,13 +618,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderNews(newsList) {
         newsGrid.innerHTML = '';
+        const dict = translations[currentLang] || translations.en;
         if (!newsList || newsList.length === 0) {
-            newsGrid.innerHTML = '<div class="news-item"><div class="news-item-title">No recent headlines retrieved for asset.</div></div>';
-            newsCountBadge.textContent = '0 Headlines';
+            newsGrid.innerHTML = `<div class="news-item"><div class="news-item-title">${currentLang === 'id' ? 'Tidak ada berita utama yang ditemukan.' : 'No recent headlines retrieved for asset.'}</div></div>`;
+            newsCountBadge.textContent = currentLang === 'id' ? '0 Berita' : '0 Headlines';
             return;
         }
 
-        newsCountBadge.textContent = `${newsList.length} Headlines`;
+        newsCountBadge.textContent = `${newsList.length} ${currentLang === 'id' ? 'Berita' : 'Headlines'}`;
 
         newsList.forEach(item => {
             const card = document.createElement('div');
@@ -435,10 +635,10 @@ document.addEventListener('DOMContentLoaded', () => {
             let sentLabel = 'NEUTRAL';
             if (item.compound > 0.05) {
                 sentClass = 'positive';
-                sentLabel = `POSITIVE (+${item.compound.toFixed(2)})`;
+                sentLabel = `${currentLang === 'id' ? 'POSITIF' : 'POSITIVE'} (+${item.compound.toFixed(2)})`;
             } else if (item.compound < -0.05) {
                 sentClass = 'negative';
-                sentLabel = `NEGATIVE (${item.compound.toFixed(2)})`;
+                sentLabel = `${currentLang === 'id' ? 'NEGATIF' : 'NEGATIVE'} (${item.compound.toFixed(2)})`;
             }
 
             card.innerHTML = `
