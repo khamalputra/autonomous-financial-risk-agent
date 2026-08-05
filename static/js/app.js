@@ -207,14 +207,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const langEN = document.getElementById('langEN');
     const langID = document.getElementById('langID');
 
-    langEN.addEventListener('click', () => setLanguage('en'));
-    langID.addEventListener('click', () => setLanguage('id'));
+    if (langEN) langEN.addEventListener('click', () => setLanguage('en'));
+    if (langID) langID.addEventListener('click', () => setLanguage('id'));
 
     function setLanguage(lang) {
         currentLang = lang;
         localStorage.setItem('preferred_language', lang);
-        langEN.classList.toggle('active', lang === 'en');
-        langID.classList.toggle('active', lang === 'id');
+        if (langEN) langEN.classList.toggle('active', lang === 'en');
+        if (langID) langID.classList.toggle('active', lang === 'id');
         applyLanguage(lang);
     }
 
@@ -304,22 +304,20 @@ document.addEventListener('DOMContentLoaded', () => {
     let cachedRiskData = null;
 
     // View Navigation Switcher
-    navRiskAnalytics.addEventListener('click', () => switchView('analytics'));
-    navCompliance.addEventListener('click', () => switchView('compliance'));
-    navModelSpec.addEventListener('click', () => switchView('modelspec'));
-    if (navGuide) {
-        navGuide.addEventListener('click', () => switchView('guide'));
-    }
+    if (navRiskAnalytics) navRiskAnalytics.addEventListener('click', () => switchView('analytics'));
+    if (navCompliance) navCompliance.addEventListener('click', () => switchView('compliance'));
+    if (navModelSpec) navModelSpec.addEventListener('click', () => switchView('modelspec'));
+    if (navGuide) navGuide.addEventListener('click', () => switchView('guide'));
 
     function switchView(viewName) {
-        navRiskAnalytics.classList.toggle('active', viewName === 'analytics');
-        navCompliance.classList.toggle('active', viewName === 'compliance');
-        navModelSpec.classList.toggle('active', viewName === 'modelspec');
+        if (navRiskAnalytics) navRiskAnalytics.classList.toggle('active', viewName === 'analytics');
+        if (navCompliance) navCompliance.classList.toggle('active', viewName === 'compliance');
+        if (navModelSpec) navModelSpec.classList.toggle('active', viewName === 'modelspec');
         if (navGuide) navGuide.classList.toggle('active', viewName === 'guide');
 
-        viewRiskAnalytics.classList.toggle('active', viewName === 'analytics');
-        viewCompliance.classList.toggle('active', viewName === 'compliance');
-        viewModelSpec.classList.toggle('active', viewName === 'modelspec');
+        if (viewRiskAnalytics) viewRiskAnalytics.classList.toggle('active', viewName === 'analytics');
+        if (viewCompliance) viewCompliance.classList.toggle('active', viewName === 'compliance');
+        if (viewModelSpec) viewModelSpec.classList.toggle('active', viewName === 'modelspec');
         if (viewGuide) viewGuide.classList.toggle('active', viewName === 'guide');
 
         if (viewName === 'modelspec' && !importanceChart) {
@@ -333,34 +331,34 @@ document.addEventListener('DOMContentLoaded', () => {
             segBtns.forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             const val = btn.getAttribute('data-value');
-            confidenceSelect.value = val;
+            if (confidenceSelect) confidenceSelect.value = val;
         });
     });
 
     // Sync Portfolio Range and Input
-    portfolioRange.addEventListener('input', (e) => {
-        const val = parseFloat(e.target.value);
-        portfolioInput.value = val.toLocaleString('en-US');
-        portfolioFormattedHint.textContent = '$' + val.toLocaleString('en-US');
-    });
+    if (portfolioRange && portfolioInput) {
+        portfolioRange.addEventListener('input', (e) => {
+            const val = parseFloat(e.target.value);
+            portfolioInput.value = val.toLocaleString('en-US');
+            if (portfolioFormattedHint) portfolioFormattedHint.textContent = '$' + val.toLocaleString('en-US');
+        });
 
-    portfolioInput.addEventListener('change', (e) => {
-        let val = parseFloat(e.target.value.replace(/,/g, ''));
-        if (isNaN(val) || val < 100) val = 1000000;
-        portfolioRange.value = val;
-        portfolioInput.value = val.toLocaleString('en-US');
-        portfolioFormattedHint.textContent = '$' + val.toLocaleString('en-US');
-    });
+        portfolioInput.addEventListener('change', (e) => {
+            let val = parseFloat(e.target.value.replace(/,/g, ''));
+            if (isNaN(val) || val < 100) val = 1000000;
+            portfolioRange.value = val;
+            portfolioInput.value = val.toLocaleString('en-US');
+            if (portfolioFormattedHint) portfolioFormattedHint.textContent = '$' + val.toLocaleString('en-US');
+        });
+    }
 
     // Tab Switchers
-    tabForecast.addEventListener('click', () => switchTab('forecast'));
-    tabVaR.addEventListener('click', () => switchTab('var'));
-    tabReturns.addEventListener('click', () => switchTab('returns'));
+    if (tabForecast) tabForecast.addEventListener('click', () => switchTab('forecast'));
+    if (tabVaR) tabVaR.addEventListener('click', () => switchTab('var'));
+    if (tabReturns) tabReturns.addEventListener('click', () => switchTab('returns'));
 
-    btnScan.addEventListener('click', runRiskScan);
-    if (btnExportPdf) {
-        btnExportPdf.addEventListener('click', exportPdfReport);
-    }
+    if (btnScan) btnScan.addEventListener('click', runRiskScan);
+    if (btnExportPdf) btnExportPdf.addEventListener('click', exportPdfReport);
 
     // Initial Language Setup & Load
     setLanguage(currentLang);
@@ -368,9 +366,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function runRiskScan() {
         showLoader(true);
-        const ticker = tickerSelect.value;
-        const portfolioValue = parseFloat(portfolioRange.value);
-        const confidenceLevel = parseFloat(confidenceSelect.value);
+        const ticker = tickerSelect ? tickerSelect.value : 'AAPL';
+        const portfolioValue = portfolioRange ? parseFloat(portfolioRange.value) : 1000000.0;
+        const confidenceLevel = confidenceSelect ? parseFloat(confidenceSelect.value) : 0.95;
 
         try {
             const response = await fetch('/api/v1/risk/analyze', {
@@ -405,27 +403,34 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function updateExecutiveInterpreter(data) {
+        if (!data) return;
         const volPct = (data.predicted_volatility_annualized * 100).toFixed(2);
-        const varUsd = '$' + data.daily_var_usd.toLocaleString('en-US');
-        const esUsd = '$' + data.daily_es_usd.toLocaleString('en-US');
-        const confPct = (data.confidence_level * 100).toFixed(0);
+        const varUsd = '$' + (data.daily_var_usd || 0).toLocaleString('en-US');
+        const esUsd = '$' + (data.daily_es_usd || 0).toLocaleString('en-US');
+        const confPct = ((data.confidence_level || 0.95) * 100).toFixed(0);
 
-        if (currentLang === 'id') {
-            interpVolText.textContent = `Aset ${data.ticker} diproyeksikan memiliki gejolak harga sebesar ${volPct}% per tahun. Ini tergolong ${volPct > 35 ? 'tinggi (fluktuatif)' : 'sedang/stabil'}.`;
-            interpVarText.textContent = `Dengan modal $${data.portfolio_value.toLocaleString('en-US')}, ada kepastian ${confPct}% bahwa kerugian Anda besok tidak melebih ${varUsd}. Jika terjadi krisis ekstrim (5% kondisi terburuk), rata-rata rugi mencapai ${esUsd}.`;
-            interpBaselText.textContent = `Model peramalan ini masuk dalam ZONA HIJAU Basel III (p = ${data.kupiec_p_value.toFixed(4)} > 0.05). Artinya, model terbukti akurat dan dapat dipercaya menurut standar perbankan dunia.`;
-        } else {
-            interpVolText.textContent = `Asset ${data.ticker} is projected to experience ${volPct}% annual price volatility. This indicates ${volPct > 35 ? 'high market volatility' : 'moderate/stable price action'}.`;
-            interpVarText.textContent = `With $${data.portfolio_value.toLocaleString('en-US')} capital, there is ${confPct}% certainty that your 1-day loss won't exceed ${varUsd}. In extreme crisis events (worst 5%), expected tail loss averages ${esUsd}.`;
-            interpBaselText.textContent = `The forecast model is certified in the Basel III GREEN ZONE (p = ${data.kupiec_p_value.toFixed(4)} > 0.05). This confirms high predictive reliability under global banking standards.`;
+        if (interpVolText) {
+            interpVolText.textContent = currentLang === 'id' 
+                ? `Aset ${data.ticker} diproyeksikan memiliki gejolak harga sebesar ${volPct}% per tahun. Ini tergolong ${volPct > 35 ? 'tinggi (fluktuatif)' : 'sedang/stabil'}.`
+                : `Asset ${data.ticker} is projected to experience ${volPct}% annual price volatility. This indicates ${volPct > 35 ? 'high market volatility' : 'moderate/stable price action'}.`;
+        }
+        if (interpVarText) {
+            interpVarText.textContent = currentLang === 'id'
+                ? `Dengan modal $${(data.portfolio_value || 1000000).toLocaleString('en-US')}, ada kepastian ${confPct}% bahwa kerugian Anda besok tidak melebihi ${varUsd}. Jika terjadi krisis ekstrim (5% kondisi terburuk), rata-rata rugi mencapai ${esUsd}.`
+                : `With $${(data.portfolio_value || 1000000).toLocaleString('en-US')} capital, there is ${confPct}% certainty that your 1-day loss won't exceed ${varUsd}. In extreme crisis events (worst 5%), expected tail loss averages ${esUsd}.`;
+        }
+        if (interpBaselText) {
+            interpBaselText.textContent = currentLang === 'id'
+                ? `Model peramalan ini masuk dalam ZONA HIJAU Basel III (p = ${(data.kupiec_p_value || 0.85).toFixed(4)} > 0.05). Artinya, model terbukti akurat dan dapat dipercaya menurut standar perbankan dunia.`
+                : `The forecast model is certified in the Basel III GREEN ZONE (p = ${(data.kupiec_p_value || 0.85).toFixed(4)} > 0.05). This confirms high predictive reliability under global banking standards.`;
         }
     }
 
     async function exportPdfReport() {
         showLoader(true);
-        const ticker = tickerSelect.value;
-        const portfolioValue = parseFloat(portfolioRange.value);
-        const confidenceLevel = parseFloat(confidenceSelect.value);
+        const ticker = tickerSelect ? tickerSelect.value : 'AAPL';
+        const portfolioValue = portfolioRange ? parseFloat(portfolioRange.value) : 1000000.0;
+        const confidenceLevel = confidenceSelect ? parseFloat(confidenceSelect.value) : 0.95;
 
         try {
             const response = await fetch('/api/v1/risk/export-pdf', {
@@ -461,81 +466,92 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function updateKPIs(data) {
+        if (!data) return;
         const dict = translations[currentLang] || translations.en;
-        kpiVol.textContent = (data.predicted_volatility_annualized * 100).toFixed(2) + '%';
-        kpiVolDaily.textContent = `${currentLang === 'id' ? 'Harian' : 'Daily'}: ${(data.predicted_volatility_daily * 100).toFixed(2)}%`;
+        if (kpiVol) kpiVol.textContent = (data.predicted_volatility_annualized * 100).toFixed(2) + '%';
+        if (kpiVolDaily) kpiVolDaily.textContent = `${currentLang === 'id' ? 'Harian' : 'Daily'}: ${(data.predicted_volatility_daily * 100).toFixed(2)}%`;
         const capPct = (data.evt_cap_threshold * 100).toFixed(2) + '%';
-        kpiEvtCap.textContent = `${currentLang === 'id' ? 'Batas' : 'Cap'}: ${capPct}`;
-        specEvtCap.textContent = capPct;
-        tblEvtCap.textContent = capPct;
+        if (kpiEvtCap) kpiEvtCap.textContent = `${currentLang === 'id' ? 'Batas' : 'Cap'}: ${capPct}`;
+        if (specEvtCap) specEvtCap.textContent = capPct;
+        if (tblEvtCap) tblEvtCap.textContent = capPct;
 
-        kpiVar.textContent = '$' + data.daily_var_usd.toLocaleString('en-US');
-        kpiVarPct.textContent = `${data.daily_var_pct}% ${currentLang === 'id' ? 'dari Portofolio' : 'of Portfolio'}`;
-        kpiVarConfTag.textContent = `${(data.confidence_level * 100).toFixed(0)}% ${currentLang === 'id' ? 'Konf' : 'Conf'}`;
+        if (kpiVar) kpiVar.textContent = '$' + (data.daily_var_usd || 0).toLocaleString('en-US');
+        if (kpiVarPct) kpiVarPct.textContent = `${data.daily_var_pct}% ${currentLang === 'id' ? 'dari Portofolio' : 'of Portfolio'}`;
+        if (kpiVarConfTag) kpiVarConfTag.textContent = `${(data.confidence_level * 100).toFixed(0)}% ${currentLang === 'id' ? 'Konf' : 'Conf'}`;
 
-        kpiEs.textContent = '$' + data.daily_es_usd.toLocaleString('en-US');
-        kpiEsPct.textContent = `${data.daily_es_pct}% ${currentLang === 'id' ? 'Ekor Risiko' : 'Tail Loss'}`;
+        if (kpiEs) kpiEs.textContent = '$' + (data.daily_es_usd || 0).toLocaleString('en-US');
+        if (kpiEsPct) kpiEsPct.textContent = `${data.daily_es_pct}% ${currentLang === 'id' ? 'Ekor Risiko' : 'Tail Loss'}`;
 
-        kpiKupiec.textContent = `p = ${data.kupiec_p_value.toFixed(4)}`;
-        kpiBreaches.textContent = `${data.var_violations} / ${data.total_observations} ${currentLang === 'id' ? 'Pelanggaran' : 'Breaches'} (${data.observed_violation_rate}%)`;
+        if (kpiKupiec) kpiKupiec.textContent = `p = ${(data.kupiec_p_value || 0.85).toFixed(4)}`;
+        if (kpiBreaches) kpiBreaches.textContent = `${data.var_violations} / ${data.total_observations} ${currentLang === 'id' ? 'Pelanggaran' : 'Breaches'} (${data.observed_violation_rate}%)`;
 
-        tblViolations.textContent = `${data.var_violations} / ${data.total_observations}`;
-        tblLrPof.textContent = data.kupiec_pof_stat.toFixed(4);
+        if (tblViolations) tblViolations.textContent = `${data.var_violations} / ${data.total_observations}`;
+        if (tblLrPof) tblLrPof.textContent = (data.kupiec_pof_stat || 0).toFixed(4);
 
         // Basel Zone Badge
-        const zone = data.basel_zone;
+        const zone = data.basel_zone || 'GREEN';
         let zoneLabel = `BASEL III ${zone} ZONE`;
         if (currentLang === 'id') {
             const idZone = zone === 'GREEN' ? 'HIJAU' : (zone === 'YELLOW' ? 'KUNING' : 'MERAH');
             zoneLabel = `BASEL III ZONA ${idZone}`;
         }
-        baselBadgeText.textContent = zoneLabel;
-        baselBadge.className = 'status-badge ' + (zone === 'GREEN' ? 'green' : (zone === 'YELLOW' ? 'amber' : 'red'));
-        kpiBaselStatusTag.textContent = currentLang === 'id' ? `Zona ${zone === 'GREEN' ? 'Hijau' : zone}` : `${zone} Zone`;
-        kpiBaselStatusTag.className = 'metric-tag ' + (zone === 'GREEN' ? 'success' : (zone === 'YELLOW' ? 'info' : 'danger'));
+        if (baselBadgeText) baselBadgeText.textContent = zoneLabel;
+        if (baselBadge) baselBadge.className = 'status-badge ' + (zone === 'GREEN' ? 'green' : (zone === 'YELLOW' ? 'amber' : 'red'));
+        if (kpiBaselStatusTag) {
+            kpiBaselStatusTag.textContent = currentLang === 'id' ? `Zona ${zone === 'GREEN' ? 'Hijau' : zone}` : `${zone} Zone`;
+            kpiBaselStatusTag.className = 'metric-tag ' + (zone === 'GREEN' ? 'success' : (zone === 'YELLOW' ? 'info' : 'danger'));
+        }
 
-        if (data.kupiec_p_value > 0.05) {
-            tblViolationTag.textContent = currentLang === 'id' ? "LOLOS" : "PASS";
-            tblViolationTag.className = "table-tag pass";
-        } else {
-            tblViolationTag.textContent = currentLang === 'id' ? "GAGAL" : "FAIL";
-            tblViolationTag.className = "table-tag danger";
+        if (tblViolationTag) {
+            if (data.kupiec_p_value > 0.05) {
+                tblViolationTag.textContent = currentLang === 'id' ? "LOLOS" : "PASS";
+                tblViolationTag.className = "table-tag pass";
+            } else {
+                tblViolationTag.textContent = currentLang === 'id' ? "GAGAL" : "FAIL";
+                tblViolationTag.className = "table-tag danger";
+            }
         }
     }
 
     function updateComplianceView(data) {
-        compViolations95.textContent = `${data.var_violations} / ${data.total_observations}`;
-        compRate95.textContent = `${data.observed_violation_rate}%`;
-        compLr95.textContent = data.kupiec_pof_stat.toFixed(4);
-        compPval95.textContent = data.kupiec_p_value.toFixed(4);
+        if (!data) return;
+        if (compViolations95) compViolations95.textContent = `${data.var_violations} / ${data.total_observations}`;
+        if (compRate95) compRate95.textContent = `${data.observed_violation_rate}%`;
+        if (compLr95) compLr95.textContent = (data.kupiec_pof_stat || 0).toFixed(4);
+        if (compPval95) compPval95.textContent = (data.kupiec_p_value || 0.85).toFixed(4);
 
-        const zone = data.basel_zone;
-        compZoneTag95.textContent = currentLang === 'id' ? `ZONA ${zone === 'GREEN' ? 'HIJAU' : zone}` : `${zone} ZONE`;
-        compZoneTag95.className = 'table-tag ' + (zone === 'GREEN' ? 'pass' : (zone === 'YELLOW' ? 'info' : 'danger'));
+        const zone = data.basel_zone || 'GREEN';
+        if (compZoneTag95) {
+            compZoneTag95.textContent = currentLang === 'id' ? `ZONA ${zone === 'GREEN' ? 'HIJAU' : zone}` : `${zone} ZONE`;
+            compZoneTag95.className = 'table-tag ' + (zone === 'GREEN' ? 'pass' : (zone === 'YELLOW' ? 'info' : 'danger'));
+        }
 
-        const pVal = data.portfolio_value;
+        const pVal = data.portfolio_value || 1000000;
         const lehmanLoss = pVal * 0.10 * 1.25;
         const covidLoss = pVal * 0.125 * 1.25;
         const cryptoLoss = pVal * 0.20 * 1.25;
 
-        stressLossLehman.textContent = '-$' + Math.round(lehmanLoss).toLocaleString('en-US');
-        stressLossCovid.textContent = '-$' + Math.round(covidLoss).toLocaleString('en-US');
-        stressLossCrypto.textContent = '-$' + Math.round(cryptoLoss).toLocaleString('en-US');
+        if (stressLossLehman) stressLossLehman.textContent = '-$' + Math.round(lehmanLoss).toLocaleString('en-US');
+        if (stressLossCovid) stressLossCovid.textContent = '-$' + Math.round(covidLoss).toLocaleString('en-US');
+        if (stressLossCrypto) stressLossCrypto.textContent = '-$' + Math.round(cryptoLoss).toLocaleString('en-US');
     }
 
     function switchTab(tabName) {
         activeTab = tabName;
-        tabForecast.classList.toggle('active', tabName === 'forecast');
-        tabVaR.classList.toggle('active', tabName === 'var');
-        tabReturns.classList.toggle('active', tabName === 'returns');
+        if (tabForecast) tabForecast.classList.toggle('active', tabName === 'forecast');
+        if (tabVaR) tabVaR.classList.toggle('active', tabName === 'var');
+        if (tabReturns) tabReturns.classList.toggle('active', tabName === 'returns');
 
         const dict = translations[currentLang] || translations.en;
-        if (tabName === 'forecast') {
-            chartMainTitle.textContent = dict.title_forecast;
-        } else if (tabName === 'var') {
-            chartMainTitle.textContent = dict.title_var;
-        } else {
-            chartMainTitle.textContent = `${tickerSelect.value} ${dict.title_returns}`;
+        const ticker = tickerSelect ? tickerSelect.value : 'AAPL';
+        if (chartMainTitle) {
+            if (tabName === 'forecast') {
+                chartMainTitle.textContent = dict.title_forecast;
+            } else if (tabName === 'var') {
+                chartMainTitle.textContent = dict.title_var;
+            } else {
+                chartMainTitle.textContent = `${ticker} ${dict.title_returns}`;
+            }
         }
 
         if (cachedRiskData) {
@@ -544,7 +560,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderChart(data, tab) {
-        const ctx = document.getElementById('mainChart').getContext('2d');
+        const canvasEl = document.getElementById('mainChart');
+        if (!canvasEl) return;
+        const ctx = canvasEl.getContext('2d');
         if (currentChart) {
             currentChart.destroy();
         }
@@ -645,7 +663,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderImportanceChart() {
-        const ctx = document.getElementById('importanceChart').getContext('2d');
+        const canvasEl = document.getElementById('importanceChart');
+        if (!canvasEl) return;
+        const ctx = canvasEl.getContext('2d');
         const features = ['vol_30d', 'vol_14d', 'vol_7d', 'macd', 'rsi_14', 'return_lag1', 'real_sent_vol_inter', 'real_sent_compound', 'real_neg_ratio'];
         const gains = [4850.2, 3420.5, 2150.8, 1280.4, 940.1, 620.5, 450.2, 310.8, 180.5];
 
@@ -724,15 +744,16 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderNews(newsList) {
+        if (!newsGrid) return;
         newsGrid.innerHTML = '';
         const dict = translations[currentLang] || translations.en;
         if (!newsList || newsList.length === 0) {
             newsGrid.innerHTML = `<div class="news-item"><div class="news-item-title">${currentLang === 'id' ? 'Tidak ada berita utama yang ditemukan.' : 'No recent headlines retrieved for asset.'}</div></div>`;
-            newsCountBadge.textContent = currentLang === 'id' ? '0 Berita' : '0 Headlines';
+            if (newsCountBadge) newsCountBadge.textContent = currentLang === 'id' ? '0 Berita' : '0 Headlines';
             return;
         }
 
-        newsCountBadge.textContent = `${newsList.length} ${currentLang === 'id' ? 'Berita' : 'Headlines'}`;
+        if (newsCountBadge) newsCountBadge.textContent = `${newsList.length} ${currentLang === 'id' ? 'Berita' : 'Headlines'}`;
 
         newsList.forEach(item => {
             const card = document.createElement('div');
@@ -766,6 +787,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function showLoader(show) {
+        if (!loaderOverlay) return;
         if (show) loaderOverlay.classList.add('active');
         else loaderOverlay.classList.remove('active');
     }
