@@ -733,11 +733,39 @@ document.addEventListener('DOMContentLoaded', () => {
             scales: {
                 x: {
                     grid: { color: '#F1F5F9' },
-                    ticks: { color: '#64748B', font: { family: 'Inter', size: 10 } }
+                    ticks: {
+                        color: '#64748B',
+                        font: { family: 'Inter', size: 11, weight: '500' },
+                        maxTicksLimit: 10,
+                        maxRotation: 0,
+                        minRotation: 0,
+                        callback: function(val, index, ticks) {
+                            const rawLabel = this.getLabelForValue(val);
+                            if (!rawLabel) return '';
+                            const parts = rawLabel.split('-');
+                            if (parts.length === 3) {
+                                const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+                                const mIdx = parseInt(parts[1], 10) - 1;
+                                return `${months[mIdx] || parts[1]} ${parts[2]}`;
+                            }
+                            return rawLabel;
+                        }
+                    }
                 },
                 y: {
                     grid: { color: '#F1F5F9' },
-                    ticks: { color: '#64748B', font: { family: 'JetBrains Mono', size: 10 } }
+                    ticks: {
+                        color: '#64748B',
+                        font: { family: 'JetBrains Mono', size: 10 },
+                        callback: function(val) {
+                            if (activeTab === 'forecast') {
+                                return (val * 100).toFixed(0) + '%';
+                            } else if (activeTab === 'var' || activeTab === 'returns') {
+                                return (val * 100).toFixed(1) + '%';
+                            }
+                            return val;
+                        }
+                    }
                 }
             }
         };
