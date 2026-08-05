@@ -8,6 +8,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnScan = document.getElementById('btnScan');
     const loaderOverlay = document.getElementById('loaderOverlay');
 
+    // Navigation Pills
+    const navRiskAnalytics = document.getElementById('navRiskAnalytics');
+    const navCompliance = document.getElementById('navCompliance');
+    const navModelSpec = document.getElementById('navModelSpec');
+
+    // View Panels
+    const viewRiskAnalytics = document.getElementById('viewRiskAnalytics');
+    const viewCompliance = document.getElementById('viewCompliance');
+    const viewModelSpec = document.getElementById('viewModelSpec');
+
     // KPI Elements
     const kpiVol = document.getElementById('kpiVol');
     const kpiVolDaily = document.getElementById('kpiVolDaily');
@@ -23,13 +33,27 @@ document.addEventListener('DOMContentLoaded', () => {
     const baselBadge = document.getElementById('baselBadge');
     const baselBadgeText = document.getElementById('baselBadgeText');
 
-    // Audit Table Elements
+    // Audit & Compliance Elements
     const tblViolations = document.getElementById('tblViolations');
     const tblViolationTag = document.getElementById('tblViolationTag');
     const tblLrPof = document.getElementById('tblLrPof');
     const tblEvtCap = document.getElementById('tblEvtCap');
     const specEvtCap = document.getElementById('specEvtCap');
     const newsCountBadge = document.getElementById('newsCountBadge');
+
+    const compViolations95 = document.getElementById('compViolations95');
+    const compRate95 = document.getElementById('compRate95');
+    const compLr95 = document.getElementById('compLr95');
+    const compPval95 = document.getElementById('compPval95');
+    const compZoneTag95 = document.getElementById('compZoneTag95');
+
+    // Stress Testing Elements
+    const stressVolLehman = document.getElementById('stressVolLehman');
+    const stressLossLehman = document.getElementById('stressLossLehman');
+    const stressVolCovid = document.getElementById('stressVolCovid');
+    const stressLossCovid = document.getElementById('stressLossCovid');
+    const stressVolCrypto = document.getElementById('stressVolCrypto');
+    const stressLossCrypto = document.getElementById('stressLossCrypto');
 
     // Segmented Buttons
     const segBtns = document.querySelectorAll('.seg-btn');
@@ -43,7 +67,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let activeTab = 'forecast';
     let currentChart = null;
+    let importanceChart = null;
     let cachedRiskData = null;
+
+    // View Navigation Switcher
+    navRiskAnalytics.addEventListener('click', () => switchView('analytics'));
+    navCompliance.addEventListener('click', () => switchView('compliance'));
+    navModelSpec.addEventListener('click', () => switchView('modelspec'));
+
+    function switchView(viewName) {
+        navRiskAnalytics.classList.toggle('active', viewName === 'analytics');
+        navCompliance.classList.toggle('active', viewName === 'compliance');
+        navModelSpec.classList.toggle('active', viewName === 'modelspec');
+
+        viewRiskAnalytics.classList.toggle('active', viewName === 'analytics');
+        viewCompliance.classList.toggle('active', viewName === 'compliance');
+        viewModelSpec.classList.toggle('active', viewName === 'modelspec');
+
+        if (viewName === 'modelspec' && !importanceChart) {
+            renderImportanceChart();
+        }
+    }
 
     // Segmented Control click handler
     segBtns.forEach(btn => {
@@ -106,6 +150,7 @@ document.addEventListener('DOMContentLoaded', () => {
             cachedRiskData = data;
 
             updateKPIs(data);
+            updateComplianceView(data);
             renderChart(data, activeTab);
             renderNews(data.recent_news);
 
@@ -152,6 +197,26 @@ document.addEventListener('DOMContentLoaded', () => {
             tblViolationTag.textContent = "FAIL";
             tblViolationTag.className = "table-tag danger";
         }
+    }
+
+    function updateComplianceView(data) {
+        compViolations95.textContent = `${data.var_violations} / ${data.total_observations}`;
+        compRate95.textContent = `${data.observed_violation_rate}%`;
+        compLr95.textContent = data.kupiec_pof_stat.toFixed(4);
+        compPval95.textContent = data.kupiec_p_value.toFixed(4);
+
+        const zone = data.basel_zone;
+        compZoneTag95.textContent = `${zone} ZONE`;
+        compZoneTag95.className = 'table-tag ' + (zone === 'GREEN' ? 'pass' : (zone === 'YELLOW' ? 'info' : 'danger'));
+
+        const pVal = data.portfolio_value;
+        const lehmanLoss = pVal * 0.10 * 1.25;
+        const covidLoss = pVal * 0.125 * 1.25;
+        const cryptoLoss = pVal * 0.20 * 1.25;
+
+        stressLossLehman.textContent = '-$' + Math.round(lehmanLoss).toLocaleString('en-US');
+        stressLossCovid.textContent = '-$' + Math.round(covidLoss).toLocaleString('en-US');
+        stressLossCrypto.textContent = '-$' + Math.round(cryptoLoss).toLocaleString('en-US');
     }
 
     function switchTab(tabName) {
@@ -271,6 +336,43 @@ document.addEventListener('DOMContentLoaded', () => {
                 options: getCommonChartOptions()
             });
         }
+    }
+
+    function renderImportanceChart() {
+        const ctx = document.getElementById('importanceChart').getContext('2d');
+        const features = ['vol_30d', 'vol_14d', 'vol_7d', 'macd', 'rsi_14', 'return_lag1', 'real_sent_vol_inter', 'real_sent_compound', 'real_neg_ratio'];
+        const gains = [4850.2, 3420.5, 2150.8, 1280.4, 940.1, 620.5, 450.2, 310.8, 180.5];
+
+        importanceChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: features,
+                datasets: [{
+                    label: 'Gain Importance Score',
+                    data: gains,
+                    backgroundColor: '#2563EB',
+                    borderRadius: 4
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    x: {
+                        grid: { color: '#F1F5F9' },
+                        ticks: { color: '#64748B', font: { family: 'JetBrains Mono', size: 10 } }
+                    },
+                    y: {
+                        grid: { display: false },
+                        ticks: { color: '#0F172A', font: { family: 'JetBrains Mono', size: 11, weight: '600' } }
+                    }
+                }
+            }
+        });
     }
 
     function getCommonChartOptions() {

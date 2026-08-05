@@ -45,9 +45,9 @@
 
             <div class="header-center">
                 <div class="nav-pills">
-                    <button class="nav-pill active"><i class="fa-solid fa-chart-pie"></i> Risk Analytics</button>
-                    <button class="nav-pill" onclick="alert('Regulatory Backtesting Report Export Ready')"><i class="fa-solid fa-file-contract"></i> Compliance</button>
-                    <button class="nav-pill" onclick="alert('Model Metadata Version 1.2 Active')"><i class="fa-solid fa-microchip"></i> Model Spec</button>
+                    <button class="nav-pill active" id="navRiskAnalytics"><i class="fa-solid fa-chart-pie"></i> Risk Analytics</button>
+                    <button class="nav-pill" id="navCompliance"><i class="fa-solid fa-file-contract"></i> Compliance</button>
+                    <button class="nav-pill" id="navModelSpec"><i class="fa-solid fa-microchip"></i> Model Spec</button>
                 </div>
             </div>
 
@@ -139,135 +139,303 @@
             <!-- Main Content Area -->
             <section class="main-content">
                 
-                <!-- KPI Executive Grid -->
-                <div class="kpi-grid">
+                <!-- VIEW 1: RISK ANALYTICS DASHBOARD -->
+                <div class="view-panel active" id="viewRiskAnalytics">
                     
-                    <div class="metric-card">
-                        <div class="metric-header">
-                            <span class="metric-title">Predicted Volatility (5-Day Forward)</span>
-                            <span class="metric-tag info">5D Volatility</span>
+                    <!-- KPI Executive Grid -->
+                    <div class="kpi-grid">
+                        
+                        <div class="metric-card">
+                            <div class="metric-header">
+                                <span class="metric-title">Predicted Volatility (5-Day Forward)</span>
+                                <span class="metric-tag info">5D Volatility</span>
+                            </div>
+                            <div class="metric-value mono" id="kpiVol">--%</div>
+                            <div class="metric-footer">
+                                <span class="mono" id="kpiVolDaily">Daily: --%</span>
+                                <span class="text-muted">•</span>
+                                <span class="mono" id="kpiEvtCap">Cap: 69.26%</span>
+                            </div>
                         </div>
-                        <div class="metric-value mono" id="kpiVol">--%</div>
-                        <div class="metric-footer">
-                            <span class="mono" id="kpiVolDaily">Daily: --%</span>
-                            <span class="text-muted">•</span>
-                            <span class="mono" id="kpiEvtCap">Cap: 69.26%</span>
+
+                        <div class="metric-card alert-border">
+                            <div class="metric-header">
+                                <span class="metric-title">Value-at-Risk (1-Day VaR)</span>
+                                <span class="metric-tag danger" id="kpiVarConfTag">95% Conf</span>
+                            </div>
+                            <div class="metric-value mono text-danger" id="kpiVar">$0</div>
+                            <div class="metric-footer">
+                                <span class="mono" id="kpiVarPct">--% of Portfolio</span>
+                            </div>
+                        </div>
+
+                        <div class="metric-card alert-border">
+                            <div class="metric-header">
+                                <span class="metric-title">Expected Shortfall (ES)</span>
+                                <span class="metric-tag danger">Tail Loss</span>
+                            </div>
+                            <div class="metric-value mono text-danger" id="kpiEs">$0</div>
+                            <div class="metric-footer">
+                                <span class="mono" id="kpiEsPct">--% Tail Loss</span>
+                            </div>
+                        </div>
+
+                        <div class="metric-card">
+                            <div class="metric-header">
+                                <span class="metric-title">Kupiec POF Backtest</span>
+                                <span class="metric-tag success" id="kpiBaselStatusTag">Green Zone</span>
+                            </div>
+                            <div class="metric-value mono" id="kpiKupiec">p = --</div>
+                            <div class="metric-footer">
+                                <span class="mono" id="kpiBreaches">-- Breaches</span>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Main Chart Workspace -->
+                    <div class="chart-card">
+                        <div class="chart-card-header">
+                            <div class="chart-title-group">
+                                <h2 class="chart-main-title" id="chartMainTitle">Volatility Forecast Tracking</h2>
+                                <p class="chart-sub-title">Out-of-sample predicted annualized volatility vs empirical realized metrics</p>
+                            </div>
+                            <div class="tab-switcher">
+                                <button class="tab-btn active" id="tabForecast"><i class="fa-solid fa-wave-square"></i> Volatility Forecast</button>
+                                <button class="tab-btn" id="tabVaR"><i class="fa-solid fa-shield-cat"></i> VaR Backtest</button>
+                                <button class="tab-btn" id="tabReturns"><i class="fa-solid fa-chart-simple"></i> Log Returns</button>
+                            </div>
+                        </div>
+                        <div class="chart-viewport">
+                            <canvas id="mainChart"></canvas>
                         </div>
                     </div>
 
-                    <div class="metric-card alert-border">
-                        <div class="metric-header">
-                            <span class="metric-title">Value-at-Risk (1-Day VaR)</span>
-                            <span class="metric-tag danger" id="kpiVarConfTag">95% Conf</span>
+                    <!-- Bottom Split Panel: News & Regulatory Table -->
+                    <div class="bottom-grid">
+                        <div class="content-box">
+                            <div class="box-header">
+                                <h3 class="box-title"><i class="fa-solid fa-newspaper text-accent"></i> Live News Headline Stream & FinBERT Sentiment</h3>
+                                <span class="badge-neutral" id="newsCountBadge">0 Headlines</span>
+                            </div>
+                            <div class="news-list" id="newsGrid"></div>
                         </div>
-                        <div class="metric-value mono text-danger" id="kpiVar">$0</div>
-                        <div class="metric-footer">
-                            <span class="mono" id="kpiVarPct">--% of Portfolio</span>
-                        </div>
-                    </div>
 
-                    <div class="metric-card alert-border">
-                        <div class="metric-header">
-                            <span class="metric-title">Expected Shortfall (ES)</span>
-                            <span class="metric-tag danger">Tail Loss</span>
-                        </div>
-                        <div class="metric-value mono text-danger" id="kpiEs">$0</div>
-                        <div class="metric-footer">
-                            <span class="mono" id="kpiEsPct">--% Tail Loss</span>
-                        </div>
-                    </div>
-
-                    <div class="metric-card">
-                        <div class="metric-header">
-                            <span class="metric-title">Kupiec POF Backtest</span>
-                            <span class="metric-tag success" id="kpiBaselStatusTag">Green Zone</span>
-                        </div>
-                        <div class="metric-value mono" id="kpiKupiec">p = --</div>
-                        <div class="metric-footer">
-                            <span class="mono" id="kpiBreaches">-- Breaches</span>
+                        <div class="content-box">
+                            <div class="box-header">
+                                <h3 class="box-title"><i class="fa-solid fa-scale-balanced text-accent"></i> Regulatory Audit Summary</h3>
+                                <span class="badge-neutral">Basel III Standard</span>
+                            </div>
+                            <div class="table-wrapper">
+                                <table class="audit-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Metric Parameter</th>
+                                            <th>Empirical Value</th>
+                                            <th>Regulatory Threshold</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>Out-of-Sample Violations</td>
+                                            <td class="mono" id="tblViolations">-- / --</td>
+                                            <td class="mono">5.00% Expected</td>
+                                            <td><span class="table-tag pass" id="tblViolationTag">PASS</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Kupiec POF Likelihood Ratio (LR POF)</td>
+                                            <td class="mono" id="tblLrPof">--</td>
+                                            <td class="mono">&lt; 3.841 (&chi;&sup2;, df=1)</td>
+                                            <td><span class="table-tag pass">PASS</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Patton QLIKE Loss Score</td>
+                                            <td class="mono">0.5725</td>
+                                            <td class="mono">Minimized</td>
+                                            <td><span class="table-tag info">OPTIMAL</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td>EVT Extreme Volatility Cap</td>
+                                            <td class="mono" id="tblEvtCap">69.26%</td>
+                                            <td class="mono">99.5th Percentile</td>
+                                            <td><span class="table-tag pass">ACTIVE</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
 
                 </div>
 
-                <!-- Main Chart Workspace -->
-                <div class="chart-card">
-                    <div class="chart-card-header">
-                        <div class="chart-title-group">
-                            <h2 class="chart-main-title" id="chartMainTitle">Volatility Forecast Tracking</h2>
-                            <p class="chart-sub-title">Out-of-sample predicted annualized volatility vs empirical realized metrics</p>
-                        </div>
-                        <div class="tab-switcher">
-                            <button class="tab-btn active" id="tabForecast"><i class="fa-solid fa-wave-square"></i> Volatility Forecast</button>
-                            <button class="tab-btn" id="tabVaR"><i class="fa-solid fa-shield-cat"></i> VaR Backtest</button>
-                            <button class="tab-btn" id="tabReturns"><i class="fa-solid fa-chart-simple"></i> Log Returns</button>
-                        </div>
-                    </div>
-                    <div class="chart-viewport">
-                        <canvas id="mainChart"></canvas>
-                    </div>
-                </div>
-
-                <!-- Bottom Split Panel: News & Backtest Table -->
-                <div class="bottom-grid">
-                    
-                    <!-- Live Financial News Stream -->
+                <!-- VIEW 2: COMPLIANCE & REGULATORY STRESS TESTING -->
+                <div class="view-panel" id="viewCompliance">
                     <div class="content-box">
                         <div class="box-header">
-                            <h3 class="box-title"><i class="fa-solid fa-newspaper text-accent"></i> Live News Headline Stream & FinBERT Sentiment</h3>
-                            <span class="badge-neutral" id="newsCountBadge">0 Headlines</span>
+                            <h3 class="box-title"><i class="fa-solid fa-certificate text-accent"></i> Basel III Regulatory Backtest & Compliance Matrix</h3>
+                            <button class="secondary-btn" onclick="alert('Exporting Regulatory PDF Report...')"><i class="fa-solid fa-download"></i> Export PDF Audit</button>
                         </div>
-                        <div class="news-list" id="newsGrid">
-                            <!-- Populated dynamically by JS -->
-                        </div>
-                    </div>
-
-                    <!-- Regulatory Compliance Summary Table -->
-                    <div class="content-box">
-                        <div class="box-header">
-                            <h3 class="box-title"><i class="fa-solid fa-scale-balanced text-accent"></i> Regulatory Audit Summary</h3>
-                            <span class="badge-neutral">Basel III Standard</span>
-                        </div>
-                        <div class="table-wrapper">
+                        <p class="section-desc">Multi-quantile Likelihood Ratio tests evaluated against the Basel Committee on Banking Supervision (BCBS 1996) Traffic Light System.</p>
+                        
+                        <div class="table-wrapper" style="margin-top: 16px;">
                             <table class="audit-table">
                                 <thead>
                                     <tr>
-                                        <th>Metric Parameter</th>
-                                        <th>Empirical Value</th>
-                                        <th>Regulatory Threshold</th>
-                                        <th>Status</th>
+                                        <th>Confidence Level (1-&alpha;)</th>
+                                        <th>Expected Violation Rate</th>
+                                        <th>Observed Violations</th>
+                                        <th>Observed Rate</th>
+                                        <th>Kupiec POF LR Stat</th>
+                                        <th>p-Value</th>
+                                        <th>Basel Traffic Zone</th>
                                     </tr>
                                 </thead>
-                                <tbody>
+                                <tbody id="complianceMatrixBody">
                                     <tr>
-                                        <td>Out-of-Sample Violations</td>
-                                        <td class="mono" id="tblViolations">-- / --</td>
-                                        <td class="mono">5.00% Expected</td>
-                                        <td><span class="table-tag pass" id="tblViolationTag">PASS</span></td>
+                                        <td class="mono">90.0%</td>
+                                        <td class="mono">10.00%</td>
+                                        <td class="mono">21 / 205</td>
+                                        <td class="mono">10.24%</td>
+                                        <td class="mono">0.0124</td>
+                                        <td class="mono">0.9112</td>
+                                        <td><span class="table-tag pass">GREEN ZONE</span></td>
                                     </tr>
                                     <tr>
-                                        <td>Kupiec POF Likelihood Ratio (LR POF)</td>
-                                        <td class="mono" id="tblLrPof">--</td>
-                                        <td class="mono">&lt; 3.841 (&chi;&sup2;, df=1)</td>
-                                        <td><span class="table-tag pass">PASS</span></td>
+                                        <td class="mono">95.0% (Standard)</td>
+                                        <td class="mono">5.00%</td>
+                                        <td class="mono" id="compViolations95">11 / 205</td>
+                                        <td class="mono" id="compRate95">5.37%</td>
+                                        <td class="mono" id="compLr95">0.0565</td>
+                                        <td class="mono" id="compPval95">0.8122</td>
+                                        <td><span class="table-tag pass" id="compZoneTag95">GREEN ZONE</span></td>
                                     </tr>
                                     <tr>
-                                        <td>Patton QLIKE Loss Score</td>
-                                        <td class="mono">0.5725</td>
-                                        <td class="mono">Minimized</td>
-                                        <td><span class="table-tag info">OPTIMAL</span></td>
-                                    </tr>
-                                    <tr>
-                                        <td>EVT Extreme Volatility Cap</td>
-                                        <td class="mono" id="tblEvtCap">69.26%</td>
-                                        <td class="mono">99.5th Percentile</td>
-                                        <td><span class="table-tag pass">ACTIVE</span></td>
+                                        <td class="mono">99.0% (Stress)</td>
+                                        <td class="mono">1.00%</td>
+                                        <td class="mono">3 / 205</td>
+                                        <td class="mono">1.46%</td>
+                                        <td class="mono">0.3842</td>
+                                        <td class="mono">0.5354</td>
+                                        <td><span class="table-tag pass">GREEN ZONE</span></td>
                                     </tr>
                                 </tbody>
                             </table>
                         </div>
                     </div>
 
+                    <!-- Stress Testing Scenarios Table -->
+                    <div class="content-box" style="margin-top: 20px;">
+                        <div class="box-header">
+                            <h3 class="box-title"><i class="fa-solid fa-volcano text-accent"></i> Historical Extreme Event Stress Scenarios</h3>
+                            <span class="badge-neutral">Hypothetical Shocks</span>
+                        </div>
+                        <div class="table-wrapper">
+                            <table class="audit-table">
+                                <thead>
+                                    <tr>
+                                        <th>Stress Scenario Name</th>
+                                        <th>Simulated Return Shock</th>
+                                        <th>Stressed Volatility Prediction</th>
+                                        <th>Stressed Portfolio Loss ($)</th>
+                                        <th>Capital Reserve Impact</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>2008 Lehman Liquidity Crunch</strong></td>
+                                        <td class="mono text-danger">-10.00%</td>
+                                        <td class="mono" id="stressVolLehman">48.25%</td>
+                                        <td class="mono text-danger" id="stressLossLehman">-$124,500</td>
+                                        <td><span class="table-tag danger">HIGH STRESS</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>2020 COVID Market Panic Shock</strong></td>
+                                        <td class="mono text-danger">-12.50%</td>
+                                        <td class="mono" id="stressVolCovid">55.80%</td>
+                                        <td class="mono text-danger" id="stressLossCovid">-$148,200</td>
+                                        <td><span class="table-tag danger">SEVERE STRESS</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Crypto Liquidity Deleveraging Shock</strong></td>
+                                        <td class="mono text-danger">-20.00%</td>
+                                        <td class="mono" id="stressVolCrypto">69.26% (EVT Cap)</td>
+                                        <td class="mono text-danger" id="stressLossCrypto">-$195,000</td>
+                                        <td><span class="table-tag danger">MAX CAP REACHED</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIEW 3: MODEL SPEC & FEATURE TRANSPARENCY -->
+                <div class="view-panel" id="viewModelSpec">
+                    <div class="bottom-grid">
+                        
+                        <!-- Model Architecture & Parameters -->
+                        <div class="content-box">
+                            <div class="box-header">
+                                <h3 class="box-title"><i class="fa-solid fa-sliders text-accent"></i> LightGBM Hyperparameters & Setup</h3>
+                                <span class="badge-neutral">v1.2 Release</span>
+                            </div>
+                            <div class="table-wrapper">
+                                <table class="audit-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Hyperparameter</th>
+                                            <th>Configured Value</th>
+                                            <th>Architectural Function</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><code>objective</code></td>
+                                            <td class="mono">regression</td>
+                                            <td>Mean Squared Error Loss Optimization</td>
+                                        </tr>
+                                        <tr>
+                                            <td><code>boosting_type</code></td>
+                                            <td class="mono">gbdt</td>
+                                            <td>Gradient Boosted Decision Trees</td>
+                                        </tr>
+                                        <tr>
+                                            <td><code>n_estimators</code></td>
+                                            <td class="mono">150</td>
+                                            <td>Number of Sequential Trees Fitted</td>
+                                        </tr>
+                                        <tr>
+                                            <td><code>learning_rate</code></td>
+                                            <td class="mono">0.05</td>
+                                            <td>Step-size Shrinkage Rate</td>
+                                        </tr>
+                                        <tr>
+                                            <td><code>num_leaves</code> / <code>max_depth</code></td>
+                                            <td class="mono">31 / 6</td>
+                                            <td>Tree Structural Complexity Bounds</td>
+                                        </tr>
+                                        <tr>
+                                            <td><code>reg_alpha</code> / <code>reg_lambda</code></td>
+                                            <td class="mono">0.1 / 1.0</td>
+                                            <td>L1 & L2 Regularization Penalties</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Feature Importance Visualizer -->
+                        <div class="content-box">
+                            <div class="box-header">
+                                <h3 class="box-title"><i class="fa-solid fa-chart-bar text-accent"></i> Predictor Feature Gain Importance</h3>
+                                <span class="badge-neutral">9 Features</span>
+                            </div>
+                            <div style="height: 240px; position: relative;">
+                                <canvas id="importanceChart"></canvas>
+                            </div>
+                        </div>
+
+                    </div>
                 </div>
 
             </section>

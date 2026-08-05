@@ -398,6 +398,27 @@ body {
     background: #1D4ED8;
 }
 
+.secondary-btn {
+    height: 36px;
+    padding: 0 14px;
+    background: var(--bg-surface);
+    color: var(--text-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.15s ease;
+}
+
+.secondary-btn:hover {
+    background: var(--bg-subtle);
+    color: var(--text-primary);
+}
+
 .sidebar-divider {
     height: 1px;
     background: var(--border-color);
@@ -438,12 +459,27 @@ body {
     color: var(--text-primary);
 }
 
-/* Main Content Area */
+/* Main Content Area & View Switching */
 .main-content {
     padding: 24px 28px;
     display: flex;
     flex-direction: column;
+}
+
+.view-panel {
+    display: none;
+    flex-direction: column;
     gap: 24px;
+}
+
+.view-panel.active {
+    display: flex;
+}
+
+.section-desc {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-top: -6px;
 }
 
 /* KPI Cards Grid */
@@ -707,6 +743,7 @@ body {
 }
 
 .table-tag.pass { background: var(--status-green-bg); color: var(--status-green); }
+.table-tag.danger { background: var(--status-red-bg); color: var(--status-red); }
 .table-tag.info { background: #E0F2FE; color: #0369A1; }
 
 /* Loader Overlay */
