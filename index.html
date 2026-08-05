@@ -84,7 +84,7 @@
 
                 <div class="config-group">
                     <div class="field-label-row">
-                        <label class="field-label" for="portfolioInput">Portfolio Value ($)</label>
+                        <label class="field-label" for="portfolioInput">Portfolio Value (USD)</label>
                         <span class="field-hint" id="portfolioFormattedHint">$1,000,000</span>
                     </div>
                     <div class="input-prefix-wrapper">
@@ -95,7 +95,7 @@
                 </div>
 
                 <div class="config-group">
-                    <label class="field-label">VaR Confidence Level ($1-\alpha$)</label>
+                    <label class="field-label">VaR Confidence Level</label>
                     <div class="segmented-control">
                         <button class="seg-btn" data-value="0.90">90%</button>
                         <button class="seg-btn active" data-value="0.95">95%</button>
@@ -144,8 +144,8 @@
                     
                     <div class="metric-card">
                         <div class="metric-header">
-                            <span class="metric-title">Predicted Volatility ($\sigma_{t+5}^{(5d)}$)</span>
-                            <span class="metric-tag info">5-Day Forward</span>
+                            <span class="metric-title">Predicted Volatility (5-Day Forward)</span>
+                            <span class="metric-tag info">5D Volatility</span>
                         </div>
                         <div class="metric-value mono" id="kpiVol">--%</div>
                         <div class="metric-footer">
@@ -246,9 +246,9 @@
                                         <td><span class="table-tag pass" id="tblViolationTag">PASS</span></td>
                                     </tr>
                                     <tr>
-                                        <td>Kupiec POF Likelihood Ratio ($LR_{\text{POF}}$)</td>
+                                        <td>Kupiec POF Likelihood Ratio (LR POF)</td>
                                         <td class="mono" id="tblLrPof">--</td>
-                                        <td class="mono">&lt; 3.841 ($\chi^2_{df=1}$)</td>
+                                        <td class="mono">&lt; 3.841 (&chi;&sup2;, df=1)</td>
                                         <td><span class="table-tag pass">PASS</span></td>
                                     </tr>
                                     <tr>

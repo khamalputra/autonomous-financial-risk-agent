@@ -220,7 +220,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     labels: dates,
                     datasets: [
                         {
-                            label: 'Daily Log Return ($r_t$)',
+                            label: 'Daily Log Return (r_t)',
                             data: data.time_series.returns,
                             borderColor: '#0284C7',
                             borderWidth: 1,
