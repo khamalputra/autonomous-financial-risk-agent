@@ -279,14 +279,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Segmented Control click handler
+    // Segmented Control click handler - ONLY updates selected confidence state without auto-scanning
     segBtns.forEach(btn => {
         btn.addEventListener('click', () => {
             segBtns.forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             const val = btn.getAttribute('data-value');
             confidenceSelect.value = val;
-            runRiskScan();
+            // NOTE: Automatic runRiskScan() removed so user must explicitly click "Run Risk Analysis" button.
         });
     });
 
