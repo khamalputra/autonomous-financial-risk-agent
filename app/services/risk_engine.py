@@ -21,7 +21,7 @@ class RiskEngineService:
     - LightGBM Non-Linear Gradient Boosted Volatility Forecasting
     - Extreme Value Theory (EVT) McNeil & Frey (2000) 99.5th Percentile Capping
     - Barone-Adesi & Giannopoulos (1999) Filtered Historical Simulation (FHS) 95% VaR & ES
-    - Kupiec (1995) POF Likelihood Ratio Test for Basel III Compliance
+    - Kupiec (1995) POF Likelihood Ratio Test for Basel III Compliance with Rolling Out-of-Sample Backtesting
     """
     def __init__(self):
         self.sia = SentimentIntensityAnalyzer()
@@ -132,12 +132,12 @@ class RiskEngineService:
                 
         df_feat['real_sent_vol_inter'] = df_feat['real_neg_ratio'] * df_feat['vol_7d']
         
-        # CRITICAL FIX: Drop NaNs ONLY from feature columns to preserve latest trading days up to today
+        # Drop NaNs ONLY from feature columns to preserve latest trading days up to today
         df_feat_clean = df_feat.dropna(subset=self.feature_cols)
         return log_returns, df_feat_clean
 
     def analyze_risk(self, ticker="AAPL", portfolio_value=1000000.0, confidence_level=0.95):
-        """Runs institutional quantitative risk engine pipeline."""
+        """Runs institutional quantitative risk engine pipeline with rolling out-of-sample backtest."""
         prices = self.fetch_market_data([ticker] if ticker not in settings.SUPPORTED_TICKERS else settings.SUPPORTED_TICKERS, period="3y")
         df_news = self.fetch_live_news_sentiment([ticker])
         
@@ -161,8 +161,26 @@ class RiskEngineService:
         daily_vols = evt_preds / np.sqrt(252)
         standardized_res = historical_returns / (daily_vols + 1e-8)
         
-        alpha_quantile = (1.0 - confidence_level) * 100
-        fhs_quantile = float(np.percentile(standardized_res, alpha_quantile))
+        alpha_pct = (1.0 - confidence_level) * 100
+        
+        # ROLLING OUT-OF-SAMPLE BACKTESTING (Kupiec 1995):
+        # We evaluate rolling 250-day windows to predict out-of-sample VaR limits dynamically for each day t.
+        window_size = 250
+        n_obs = len(standardized_res)
+        
+        var_series_pct = np.zeros(n_obs)
+        # Default initial quantile
+        initial_q = float(np.percentile(standardized_res[:window_size], alpha_pct))
+        var_series_pct[:window_size] = initial_q * daily_vols[:window_size]
+        
+        # Dynamic rolling out-of-sample quantile calculation
+        for i in range(window_size, n_obs):
+            sub_res = standardized_res[:i] # Expanding out-of-sample history up to t-1
+            q_i = float(np.percentile(sub_res, alpha_pct))
+            var_series_pct[i] = q_i * daily_vols[i]
+            
+        # Latest forecast quantile for tomorrow
+        fhs_quantile = float(np.percentile(standardized_res, alpha_pct))
         
         daily_var_pct = float(abs(fhs_quantile * latest_pred_vol_daily))
         daily_var_usd = float(daily_var_pct * portfolio_value)
@@ -173,15 +191,18 @@ class RiskEngineService:
         daily_es_pct = float(abs(es_quantile * latest_pred_vol_daily))
         daily_es_usd = float(daily_es_pct * portfolio_value)
         
-        # Dynamic VaR limits time series & breach detection
-        var_series_pct = fhs_quantile * daily_vols
-        breach_mask = historical_returns < var_series_pct
-        violations = int(breach_mask.sum())
-        N = len(historical_returns)
+        # Out-of-Sample Breach detection on evaluation period (after initial window)
+        eval_returns = historical_returns.iloc[window_size:]
+        eval_var_limits = var_series_pct[window_size:]
+        
+        breach_mask_eval = eval_returns < eval_var_limits
+        violations = int(breach_mask_eval.sum())
+        N = len(eval_returns)
+        
         p_expected = float(1.0 - confidence_level)
         p_observed = float(violations / N) if N > 0 else p_expected
         
-        # Kupiec (1995) POF Likelihood Ratio Test with boundary domain protection
+        # Kupiec (1995) POF Likelihood Ratio Test
         if N > 0:
             x = violations
             p = p_expected
@@ -198,12 +219,15 @@ class RiskEngineService:
             
         basel_zone = "GREEN" if p_value_kupiec > 0.05 else ("YELLOW" if p_value_kupiec > 0.01 else "RED")
         
+        # Full series breach mask for visual rendering
+        full_breaches = historical_returns < var_series_pct
+        
         # Format 120-day trailing arrays for frontend visualizer
         recent_dates = [d.strftime('%Y-%m-%d') for d in df_feat.index[-120:]]
         recent_returns = [float(r) for r in historical_returns.iloc[-120:].values]
         recent_predicted_vol = [float(v) for v in evt_preds[-120:]]
         recent_var_limits = [float(v) for v in var_series_pct[-120:]]
-        recent_breaches = [bool(b) for b in breach_mask.iloc[-120:].values]
+        recent_breaches = [bool(b) for b in full_breaches.iloc[-120:].values]
         
         news_list = df_news.to_dict(orient='records') if not df_news.empty else []
         
