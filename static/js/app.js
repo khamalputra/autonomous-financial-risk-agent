@@ -104,17 +104,17 @@ document.addEventListener('DOMContentLoaded', () => {
         baselBadge.textContent = `BASEL III ${data.basel_zone} ZONE`;
         baselBadge.className = 'status-badge';
         if (data.basel_zone === 'GREEN') {
-            baselBadge.style.background = 'rgba(16, 185, 129, 0.15)';
-            baselBadge.style.borderColor = 'rgba(16, 185, 129, 0.4)';
-            baselBadge.style.color = '#10B981';
+            baselBadge.style.background = 'rgba(5, 150, 105, 0.08)';
+            baselBadge.style.borderColor = 'rgba(5, 150, 105, 0.25)';
+            baselBadge.style.color = '#059669';
         } else if (data.basel_zone === 'YELLOW') {
-            baselBadge.style.background = 'rgba(245, 158, 11, 0.15)';
-            baselBadge.style.borderColor = 'rgba(245, 158, 11, 0.4)';
-            baselBadge.style.color = '#F59E0B';
+            baselBadge.style.background = 'rgba(217, 119, 6, 0.08)';
+            baselBadge.style.borderColor = 'rgba(217, 119, 6, 0.25)';
+            baselBadge.style.color = '#D97706';
         } else {
-            baselBadge.style.background = 'rgba(239, 68, 68, 0.15)';
-            baselBadge.style.borderColor = 'rgba(239, 68, 68, 0.4)';
-            baselBadge.style.color = '#EF4444';
+            baselBadge.style.background = 'rgba(225, 29, 72, 0.08)';
+            baselBadge.style.borderColor = 'rgba(225, 29, 72, 0.25)';
+            baselBadge.style.color = '#E11D48';
         }
     }
 
@@ -146,7 +146,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         {
                             label: 'LightGBM + EVT Cap Predicted Volatility',
                             data: data.time_series.predicted_volatility,
-                            borderColor: '#EF4444',
+                            borderColor: '#E11D48',
                             borderWidth: 2,
                             pointRadius: 0,
                             fill: false,
@@ -155,7 +155,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         {
                             label: `EVT Cap Threshold (${(data.evt_cap_threshold * 100).toFixed(2)}%)`,
                             data: Array(dates.length).fill(data.evt_cap_threshold),
-                            borderColor: '#94A3B8',
+                            borderColor: '#64748B',
                             borderWidth: 1.5,
                             borderDash: [5, 5],
                             pointRadius: 0,
@@ -178,7 +178,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         {
                             label: 'Daily Log Returns ($r_t$)',
                             data: data.time_series.returns,
-                            borderColor: '#4FACFE',
+                            borderColor: '#0284C7',
                             borderWidth: 1,
                             pointRadius: 0,
                             fill: false
@@ -186,7 +186,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         {
                             label: `FHS ${(data.confidence_level * 100).toFixed(0)}% VaR Limit`,
                             data: data.time_series.var_limits,
-                            borderColor: '#EF4444',
+                            borderColor: '#E11D48',
                             borderWidth: 2,
                             pointRadius: 0,
                             fill: false
@@ -194,8 +194,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         {
                             label: 'VaR Breaches (Violations)',
                             data: breachData,
-                            backgroundColor: '#EF4444',
-                            borderColor: '#EF4444',
+                            backgroundColor: '#E11D48',
+                            borderColor: '#E11D48',
                             pointRadius: 4,
                             pointHoverRadius: 6,
                             showLine: false
@@ -213,13 +213,13 @@ document.addEventListener('DOMContentLoaded', () => {
                         {
                             label: `${data.ticker} Daily Return Time-Series`,
                             data: data.time_series.returns,
-                            borderColor: '#00F2FE',
+                            borderColor: '#2563EB',
                             borderWidth: 1.5,
                             pointRadius: 0,
                             fill: {
                                 target: 'origin',
-                                above: 'rgba(0, 242, 254, 0.1)',
-                                below: 'rgba(239, 68, 68, 0.1)'
+                                above: 'rgba(37, 99, 235, 0.08)',
+                                below: 'rgba(225, 29, 72, 0.08)'
                             }
                         }
                     ]
@@ -237,29 +237,30 @@ document.addEventListener('DOMContentLoaded', () => {
                 title: {
                     display: true,
                     text: titleText,
-                    color: '#F0F4F8',
+                    color: '#0F172A',
                     font: { family: 'Outfit', size: 16, weight: '700' }
                 },
                 legend: {
-                    labels: { color: '#94A3B8', font: { family: 'Inter', size: 12 } }
+                    labels: { color: '#475569', font: { family: 'Inter', size: 12, weight: '600' } }
                 },
                 tooltip: {
                     mode: 'index',
                     intersect: false,
-                    backgroundColor: 'rgba(18, 24, 38, 0.95)',
-                    titleColor: '#00F2FE',
-                    bodyColor: '#F0F4F8',
-                    borderColor: 'rgba(255, 255, 255, 0.1)',
-                    borderWidth: 1
+                    backgroundColor: '#FFFFFF',
+                    titleColor: '#2563EB',
+                    bodyColor: '#0F172A',
+                    borderColor: '#E2E8F0',
+                    borderWidth: 1,
+                    boxShadow: '0 10px 25px rgba(15, 23, 42, 0.1)'
                 }
             },
             scales: {
                 x: {
-                    grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                    grid: { color: '#F1F5F9' },
                     ticks: { color: '#64748B', font: { size: 11 } }
                 },
                 y: {
-                    grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                    grid: { color: '#F1F5F9' },
                     ticks: { color: '#64748B', font: { size: 11 } }
                 }
             }
@@ -290,7 +291,7 @@ document.addEventListener('DOMContentLoaded', () => {
             card.innerHTML = `
                 <div class="news-title">${escapeHtml(item.title)}</div>
                 <div class="news-footer">
-                    <span style="color: var(--text-muted);">${item.ticker}</span>
+                    <span style="color: var(--text-muted); font-weight: 600;">${item.ticker}</span>
                     <span class="sent-tag ${sentClass}">${sentLabel}</span>
                 </div>
             `;
