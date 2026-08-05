@@ -48,6 +48,7 @@
                     <button class="nav-pill active" id="navRiskAnalytics"><i class="fa-solid fa-chart-pie"></i> <span data-i18n="nav_risk">Risk Analytics</span></button>
                     <button class="nav-pill" id="navCompliance"><i class="fa-solid fa-file-contract"></i> <span data-i18n="nav_compliance">Compliance</span></button>
                     <button class="nav-pill" id="navModelSpec"><i class="fa-solid fa-microchip"></i> <span data-i18n="nav_modelspec">Model Spec</span></button>
+                    <button class="nav-pill guide-pill" id="navGuide"><i class="fa-solid fa-circle-question"></i> <span data-i18n="nav_guide">Beginner Guide</span></button>
                 </div>
             </div>
 
@@ -148,13 +149,45 @@
                 <!-- VIEW 1: RISK ANALYTICS DASHBOARD -->
                 <div class="view-panel active" id="viewRiskAnalytics">
                     
+                    <!-- Beginner Executive Risk Interpreter Banner -->
+                    <div class="interpreter-banner">
+                        <div class="interpreter-header">
+                            <i class="fa-solid fa-wand-magic-sparkles text-accent"></i>
+                            <span class="interpreter-title" data-i18n="interp_title">Executive Risk Interpreter (Panduan Bahasa Awam)</span>
+                            <span class="interpreter-badge" data-i18n="interp_badge">Analisis Otomatis</span>
+                        </div>
+                        <div class="interpreter-grid">
+                            <div class="interp-item">
+                                <i class="fa-solid fa-arrow-trend-up interp-icon text-accent"></i>
+                                <div>
+                                    <strong data-i18n="interp_vol_head">Estimasi Gejolak Harga (Volatilitas):</strong>
+                                    <p id="interpVolText">Loading risk metrics...</p>
+                                </div>
+                            </div>
+                            <div class="interp-item">
+                                <i class="fa-solid fa-shield-halved interp-icon text-danger"></i>
+                                <div>
+                                    <strong data-i18n="interp_var_head">Batas Kerugian Maksimal Harian (VaR 95%):</strong>
+                                    <p id="interpVarText">Loading risk metrics...</p>
+                                </div>
+                            </div>
+                            <div class="interp-item">
+                                <i class="fa-solid fa-building-columns interp-icon text-success"></i>
+                                <div>
+                                    <strong data-i18n="interp_basel_head">Tingkat Kepercayaan Model (Basel III):</strong>
+                                    <p id="interpBaselText">Loading risk metrics...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- KPI Executive Grid -->
                     <div class="kpi-grid">
                         
                         <div class="metric-card">
                             <div class="metric-header">
                                 <span class="metric-title" data-i18n="kpi_pred_vol">Predicted Volatility (5-Day Forward)</span>
-                                <span class="metric-tag info" data-i18n="tag_5d_vol">5D Volatility</span>
+                                <span class="info-tooltip" title="Tingkat gejolak harga yang diprediksi mesin untuk 5 hari ke depan. Semakin tinggi angka %, semakin fluktuatif harganya."><i class="fa-solid fa-circle-info"></i></span>
                             </div>
                             <div class="metric-value mono" id="kpiVol">--%</div>
                             <div class="metric-footer">
@@ -167,7 +200,7 @@
                         <div class="metric-card alert-border">
                             <div class="metric-header">
                                 <span class="metric-title" data-i18n="kpi_var">Value-at-Risk (1-Day VaR)</span>
-                                <span class="metric-tag danger" id="kpiVarConfTag">95% Conf</span>
+                                <span class="info-tooltip" title="Batas estimasi kerugian maksimal Anda dalam 1 hari kerja normal dengan kepastian 95%. Terdapat 5% kemungkinan rugi lebih besar dari angka ini."><i class="fa-solid fa-circle-info"></i></span>
                             </div>
                             <div class="metric-value mono text-danger" id="kpiVar">$0</div>
                             <div class="metric-footer">
@@ -178,7 +211,7 @@
                         <div class="metric-card alert-border">
                             <div class="metric-header">
                                 <span class="metric-title" data-i18n="kpi_es">Expected Shortfall (ES)</span>
-                                <span class="metric-tag danger" data-i18n="tag_tail_loss">Tail Loss</span>
+                                <span class="info-tooltip" title="Rata-rata kerugian ekstrim yang akan terjadi jika pasar mengalami krisis (kondisi 5% terburuk)."><i class="fa-solid fa-circle-info"></i></span>
                             </div>
                             <div class="metric-value mono text-danger" id="kpiEs">$0</div>
                             <div class="metric-footer">
@@ -189,7 +222,7 @@
                         <div class="metric-card">
                             <div class="metric-header">
                                 <span class="metric-title" data-i18n="kpi_kupiec">Kupiec POF Backtest</span>
-                                <span class="metric-tag success" id="kpiBaselStatusTag">Green Zone</span>
+                                <span class="info-tooltip" title="Pengujian regulasi perbankan internasional. Jika p-value > 0.05 (Zona Hijau), model ini terbukti akurat dan aman digunakan."><i class="fa-solid fa-circle-info"></i></span>
                             </div>
                             <div class="metric-value mono" id="kpiKupiec">p = --</div>
                             <div class="metric-footer">
@@ -441,6 +474,51 @@
                             </div>
                         </div>
 
+                    </div>
+                </div>
+
+                <!-- VIEW 4: BEGINNER METRIC GUIDE & GLOSSARY -->
+                <div class="view-panel" id="viewGuide">
+                    <div class="content-box">
+                        <div class="box-header">
+                            <h3 class="box-title"><i class="fa-solid fa-book-open text-accent"></i> <span data-i18n="guide_title">Panduan Istilah Risiko Pasar untuk Pemula</span></h3>
+                            <span class="badge-neutral" data-i18n="badge_beginner">Panduan Ringkas</span>
+                        </div>
+                        <p class="section-desc" data-i18n="guide_desc">Penjelasan sederhana mengenai 4 istilah utama yang digunakan di terminal risiko ini tanpa rumus ekonometrika rumit.</p>
+
+                        <div class="glossary-grid" style="margin-top: 16px;">
+                            <div class="glossary-card">
+                                <div class="glossary-header">
+                                    <div class="glossary-icon text-accent"><i class="fa-solid fa-wave-square"></i></div>
+                                    <strong data-i18n="glos_vol_title">1. Volatilitas (Volatility)</strong>
+                                </div>
+                                <p data-i18n="glos_vol_body"><strong>Apa artinya?</strong> Seberapa cepat dan seberapa besar harga suatu aset naik atau turun.<br><strong>Analogi Sederhana:</strong> Bayangkan seperti cuaca. Volatilitas rendah seperti hari cerah (harga stabil), sedangkan volatilitas tinggi seperti badai (harga naik turun secara drastis).</p>
+                            </div>
+
+                            <div class="glossary-card alert-border">
+                                <div class="glossary-header">
+                                    <div class="glossary-icon text-danger"><i class="fa-solid fa-shield-cat"></i></div>
+                                    <strong data-i18n="glos_var_title">2. Value-at-Risk (VaR 95%)</strong>
+                                </div>
+                                <p data-i18n="glos_var_body"><strong>Apa artinya?</strong> Angka perkiraan kerugian <em>maksimal</em> yang mungkin Anda alami besok dalam kondisi pasar normal dengan kepastian 95%.<br><strong>Analogi Sederhana:</strong> Jika VaR 95% Anda adalah $20.000, artinya ada kepastian 95 dari 100 hari bahwa kerugian harian Anda tidak akan melebih $20.000.</p>
+                            </div>
+
+                            <div class="glossary-card alert-border">
+                                <div class="glossary-header">
+                                    <div class="glossary-icon text-danger"><i class="fa-solid fa-volcano"></i></div>
+                                    <strong data-i18n="glos_es_title">3. Expected Shortfall (ES)</strong>
+                                </div>
+                                <p data-i18n="glos_es_body"><strong>Apa artinya?</strong> Rata-rata kerugian jika skenario terburuk (5% kondisi ekstrim/krisis) benar-benar terjadi di luar batas VaR.<br><strong>Analogi Sederhana:</strong> Jika VaR adalah 'batas payung', maka ES memberitahu Anda seberapa basah Anda jika terjadi 'badai topan' yang merusak payung tersebut.</p>
+                            </div>
+
+                            <div class="glossary-card">
+                                <div class="glossary-header">
+                                    <div class="glossary-icon text-success"><i class="fa-solid fa-building-columns"></i></div>
+                                    <strong data-i18n="glos_kupiec_title">4. Uji Kupiec POF (Basel III)</strong>
+                                </div>
+                                <p data-i18n="glos_kupiec_body"><strong>Apa artinya?</strong> Tes kesehatan dan akurasi model menurut standar perbankan internasional.<br><strong>Analogi Sederhana:</strong> Seperti hasil uji kelayakan kendaraan (KIR). Jika masuk Zona Hijau (Green Zone), artinya mesin peramal risiko terbukti akurat dan terpercaya.</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
