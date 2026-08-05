@@ -345,7 +345,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         portfolioInput.addEventListener('change', (e) => {
             let val = parseFloat(e.target.value.replace(/,/g, ''));
-            if (isNaN(val) || val < 100) val = 1000000;
+            if (isNaN(val) || val < 1) val = 1000;
             portfolioRange.value = val;
             portfolioInput.value = val.toLocaleString('en-US');
             if (portfolioFormattedHint) portfolioFormattedHint.textContent = '$' + val.toLocaleString('en-US');
