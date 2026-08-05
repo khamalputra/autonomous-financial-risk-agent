@@ -14,6 +14,15 @@ from app.core.config import settings
 nltk.download('vader_lexicon', quiet=True)
 
 class RiskEngineService:
+    """
+    Institutional Quantitative Market Risk Intelligence Service.
+    Implements:
+    - Realized Volatility (Andersen et al. 2003 sum of squared log-returns)
+    - LightGBM Non-Linear Gradient Boosted Volatility Forecasting
+    - Extreme Value Theory (EVT) McNeil & Frey (2000) 99.5th Percentile Capping
+    - Barone-Adesi & Giannopoulos (1999) Filtered Historical Simulation (FHS) 95% VaR & ES
+    - Kupiec (1995) POF Likelihood Ratio Test for Basel III Compliance
+    """
     def __init__(self):
         self.sia = SentimentIntensityAnalyzer()
         self.model = None
@@ -32,7 +41,7 @@ class RiskEngineService:
                 self.evt_cap_threshold = self.metadata.get("evt_cap_threshold", settings.DEFAULT_EVT_CAP)
                 self.feature_cols = self.metadata.get("features", self.feature_cols)
 
-    def fetch_market_data(self, tickers=None, period="2y"):
+    def fetch_market_data(self, tickers=None, period="3y"):
         """Fetches real market prices via yfinance."""
         if tickers is None:
             tickers = settings.SUPPORTED_TICKERS
@@ -75,7 +84,10 @@ class RiskEngineService:
         return pd.DataFrame(records)
 
     def compute_features(self, df_prices, target_ticker="AAPL", daily_sent_df=None):
-        """Computes 1-lag shifted features and target volatility."""
+        """
+        Computes 1-lag shifted features and target realized volatility according to
+        Andersen et al. (2003) zero-mean realized variance: sigma_5d = sqrt((1/5 * sum r_t^2) * 252).
+        """
         log_returns = np.log(df_prices / df_prices.shift(1)).dropna()
         if target_ticker not in log_returns.columns:
             target_ticker = log_returns.columns[0]
@@ -83,13 +95,17 @@ class RiskEngineService:
         ret = log_returns[target_ticker].copy()
         df_feat = pd.DataFrame(index=ret.index)
         
-        realized_vol_5d = ret.rolling(window=5).std() * np.sqrt(252)
+        # Rigorous Realized Volatility: sqrt(mean(r^2) * 252)
+        realized_vol_5d = np.sqrt((ret ** 2).rolling(window=5).mean() * 252)
         df_feat['target_vol_5d'] = realized_vol_5d.shift(-5)
-        df_feat['return_lag1'] = ret.shift(1)
-        df_feat['vol_7d'] = ret.rolling(7).std().shift(1) * np.sqrt(252)
-        df_feat['vol_14d'] = ret.rolling(14).std().shift(1) * np.sqrt(252)
-        df_feat['vol_30d'] = ret.rolling(30).std().shift(1) * np.sqrt(252)
         
+        # Lagged Volatilities (Shifted by 1 trading day to prevent data leakage)
+        df_feat['return_lag1'] = ret.shift(1)
+        df_feat['vol_7d'] = np.sqrt((ret ** 2).rolling(7).mean() * 252).shift(1)
+        df_feat['vol_14d'] = np.sqrt((ret ** 2).rolling(14).mean() * 252).shift(1)
+        df_feat['vol_30d'] = np.sqrt((ret ** 2).rolling(30).mean() * 252).shift(1)
+        
+        # Momentum Predictors (Shifted by 1 day)
         delta = ret.diff()
         gain = (delta.where(delta > 0, 0)).rolling(14).mean()
         loss = (-delta.where(delta < 0, 0)).rolling(14).mean()
@@ -100,6 +116,7 @@ class RiskEngineService:
         ema26 = ret.ewm(span=26, adjust=False).mean()
         df_feat['macd'] = (ema12 - ema26).shift(1)
         
+        # Sentiment Proxies & News Feeds
         ret_shock = ret.shift(1)
         df_feat['real_sent_compound'] = np.where(ret_shock < -0.01, -1.0 * np.abs(ret_shock), 0.5 * ret_shock)
         df_feat['real_neg_ratio'] = (ret_shock < -0.01).astype(float)
@@ -116,27 +133,26 @@ class RiskEngineService:
         return log_returns, df_feat.dropna()
 
     def analyze_risk(self, ticker="AAPL", portfolio_value=1000000.0, confidence_level=0.95):
-        """Runs full risk engine pipeline for a given ticker."""
+        """Runs institutional quantitative risk engine pipeline."""
         prices = self.fetch_market_data([ticker] if ticker not in settings.SUPPORTED_TICKERS else settings.SUPPORTED_TICKERS, period="3y")
         df_news = self.fetch_live_news_sentiment([ticker])
         
         log_returns, df_feat = self.compute_features(prices, target_ticker=ticker, daily_sent_df=df_news)
         
         X = df_feat[self.feature_cols]
-        y_true = df_feat['target_vol_5d']
         
         if self.model is not None:
             raw_preds = self.model.predict(X)
         else:
-            # Fallback historical rolling std if binary is uninitialized
             raw_preds = df_feat['vol_30d'].values
             
+        # EVT 99.5th Percentile Thresholding (McNeil & Frey 2000)
         evt_preds = np.minimum(raw_preds, self.evt_cap_threshold)
         
         latest_pred_vol_annual = float(evt_preds[-1])
         latest_pred_vol_daily = latest_pred_vol_annual / np.sqrt(252)
         
-        # Filtered Historical Simulation (FHS) VaR 95% & Expected Shortfall (ES 95%)
+        # Filtered Historical Simulation (Barone-Adesi & Giannopoulos 1999)
         historical_returns = log_returns[ticker].reindex(df_feat.index)
         daily_vols = evt_preds / np.sqrt(252)
         standardized_res = historical_returns / (daily_vols + 1e-8)
@@ -144,13 +160,13 @@ class RiskEngineService:
         alpha_quantile = (1.0 - confidence_level) * 100
         fhs_quantile = float(np.percentile(standardized_res, alpha_quantile))
         
-        daily_var_pct = abs(fhs_quantile * latest_pred_vol_daily)
+        daily_var_pct = float(abs(fhs_quantile * latest_pred_vol_daily))
         daily_var_usd = float(daily_var_pct * portfolio_value)
         
-        # Expected Shortfall (ES) - tail loss average beyond VaR
+        # Expected Shortfall (ES 95% / Coherent Tail Risk Measure - Artzner et al. 1999)
         tail_res = standardized_res[standardized_res <= fhs_quantile]
         es_quantile = float(tail_res.mean()) if len(tail_res) > 0 else fhs_quantile * 1.25
-        daily_es_pct = abs(es_quantile * latest_pred_vol_daily)
+        daily_es_pct = float(abs(es_quantile * latest_pred_vol_daily))
         daily_es_usd = float(daily_es_pct * portfolio_value)
         
         # Dynamic VaR limits time series & breach detection
@@ -158,14 +174,19 @@ class RiskEngineService:
         breach_mask = historical_returns < var_series_pct
         violations = int(breach_mask.sum())
         N = len(historical_returns)
-        p_expected = 1.0 - confidence_level
-        p_observed = violations / N if N > 0 else p_expected
+        p_expected = float(1.0 - confidence_level)
+        p_observed = float(violations / N) if N > 0 else p_expected
         
-        # Kupiec POF Likelihood Ratio Test
-        if N > 0 and 0 < p_observed < 1:
-            log_L_null = (N - violations) * np.log(1 - p_expected) + violations * np.log(p_expected)
-            log_L_alt = (N - violations) * np.log(1 - p_observed) + violations * np.log(p_observed)
-            LR_pof = float(2 * (log_L_alt - log_L_null))
+        # Kupiec (1995) POF Likelihood Ratio Test with boundary domain protection
+        if N > 0:
+            x = violations
+            p = p_expected
+            p_hat = max(min(p_observed, 0.9999), 0.0001)
+            
+            # Robust Likelihood Formula: 2 * [(N-x)*ln((1-p_hat)/(1-p)) + x*ln(p_hat/p)]
+            log_L_null = (N - x) * np.log(1 - p) + x * np.log(p)
+            log_L_alt = (N - x) * np.log(1 - p_hat) + x * np.log(p_hat)
+            LR_pof = float(max(0.0, 2 * (log_L_alt - log_L_null)))
             p_value_kupiec = float(1.0 - stats.chi2.cdf(LR_pof, df=1))
         else:
             LR_pof = 0.0
@@ -173,7 +194,7 @@ class RiskEngineService:
             
         basel_zone = "GREEN" if p_value_kupiec > 0.05 else ("YELLOW" if p_value_kupiec > 0.01 else "RED")
         
-        # Build JSON response arrays
+        # Format 120-day trailing arrays for frontend visualizer
         recent_dates = [d.strftime('%Y-%m-%d') for d in df_feat.index[-120:]]
         recent_returns = [float(r) for r in historical_returns.iloc[-120:].values]
         recent_predicted_vol = [float(v) for v in evt_preds[-120:]]
