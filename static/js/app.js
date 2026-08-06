@@ -134,14 +134,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (tabVaR) tabVaR.addEventListener('click', () => switchTab('var'));
     if (tabReturns) tabReturns.addEventListener('click', () => switchTab('returns'));
 
-
-
-    if (btnScan) btnScan.addEventListener('click', runRiskScan);
-    if (btnExportPdf) btnExportPdf.addEventListener('click', exportPdfReport);
-
-    // Initial Load
-    runRiskScan();
-
     // Decoupled Hosting Support (Vercel Frontend + Railway Backend)
     const API_BASE_URL = window.location.hostname.includes('vercel.app') 
         ? 'https://your-railway-app.up.railway.app' 
@@ -203,6 +195,12 @@ document.addEventListener('DOMContentLoaded', () => {
             if (refreshIcon) refreshIcon.classList.remove('fa-spin');
         }
     }
+
+    if (btnScan) btnScan.addEventListener('click', runRiskScan);
+    if (btnExportPdf) btnExportPdf.addEventListener('click', exportPdfReport);
+
+    // Initial Load
+    runRiskScan();
 
     function updateExecutiveInterpreter(data) {
         if (!data) return;
