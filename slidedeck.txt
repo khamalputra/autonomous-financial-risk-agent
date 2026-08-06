@@ -1,8 +1,8 @@
 INSTITUTIONAL QUANTITATIVE AUDIT & RISK INTELLIGENCE REPORT
-Institutional CRISP-DM Quantitative Audit & Risk Intelligence Report
+Quantitative Audit & Risk Intelligence Terminal
 4-Asset Benchmark Portfolio (AAPL, MSFT, BTC-USD, ETH-USD):
 Market Risk, Volatility Modeling & Basel III Regulatory Certification
-Framework 	: CRISP-DM Standard v1.2
+Version 	: v1.2 Production Ready
 Audience 	: Executive Board Members, Investment Committees & Institutional LPs
 Author 		: Ade Khamelia Putra / Risk Intelligence Team
 
@@ -31,7 +31,7 @@ Provide real-time, automated, and backtested 95% 1-Day Value-at-Risk (VaR) and E
 Target Portfolio: 
 $1,000,000 Nominal Portfolio split across Equity (AAPL, MSFT) and Crypto (BTC-USD, ETH-USD).
 
-CRISP-DM Phase 1 — Business Understanding & Objectives
+System Objectives & Core Targets
 01. Backtesting Accuracy (Kupiec POF)
 Achieve Kupiec POF Test p-value > 0.05 to qualify for the regulatory Target Green Zone, ensuring risk is not underestimated.
 02. Volatility Forecasting Performance
@@ -39,8 +39,7 @@ Outperform standard parametric GARCH(1,1) Root Mean Squared Error (RMSE) benchma
 03. Sentiment Integration Protocol
 Enforce zero lookahead bias via a strict t-1 news lag shift, seamlessly blending real-time NLP indicators into the risk pipeline.
 
-CRISP-DM Phase 2 — Data Understanding & 4-Asset Profiling
-Statistical Diagnostics & Volatility Profiling
+Multi-Asset Profiling & Statistical Diagnostics
 Asset       Archetype                   Days    Ann. Vol.   Kurtosis (Type)
 AAPL        Mega-Cap Tech Equity        1,400   24.81%      4.82 (Leptokurtic)
 MSFT        Tech Growth Equity          1,400   26.15%      5.12 (Leptokurtic)
@@ -54,7 +53,7 @@ Crypto assets (BTC-USD, ETH-USD) exhibit extreme non-normality and power-law tai
 02. Modeling Implication:
 High kurtosis and tail heaviness mandate robust volatility models like Filtered Historical Simulation (FHS) over standard GARCH.
 
-CRISP-DM Phase 3 — Data Preparation & Pipeline Architecture
+Data Preparation & Pipeline Architecture
 9-Feature Predictor Matrix across 1,400 Days
 Establishing a clean log-return normalization and feature matrix with weekend forward-fill synchronization for multi-asset alignment.
 01. Log-Return Normalization
@@ -64,7 +63,7 @@ r_t = ln(P_t / P_t-1) calculated across 1,400 trading days. Establishes a statio
 03. Outlier Normalization & Imputation
 Forward-fill imputation for weekend crypto synchronization with equity trading calendars, ensuring continuous temporal alignment across all assets.
 
-CRISP-DM Phase 4 — Volatility Modeling (LightGBM + GARCH)
+Hybrid Volatility Modeling (LightGBM + GARCH)
 Core Model
 01. Hybrid Volatility Framework: LightGBM Gradient Boosted Decision Trees trained on GARCH(1,1) residuals.
 02. Non-Linear Dynamics: Designed to capture complex asymmetric market shocks and non-linear patterns missed by standard GARCH.
@@ -107,7 +106,7 @@ Negative Sentiment Surge (Compound < -0.35) triggers volatility expansion alerts
 03. Lookahead Bias Prevention
 News sentiment timestamp t is strictly restricted to forecasting return volatility at t+1 to eliminate any future information leakage.
 
-CRISP-DM Phase 5 — Basel III Regulatory Certification (Kupiec Test - 1,400 Days)
+Basel III Regulatory Certification (Kupiec Test - 1,400 Days)
 Asset       Days    Exp. Breaches   Obs. Breaches   Breach Ratio    Kupiec p-val    Status
 AAPL        1,400   70              66              4.71%           0.8122          Green Zone (Certified)
 MSFT        1,400   70              68              4.85%           0.7845          Green Zone (Certified)
@@ -118,7 +117,7 @@ Regulatory Backtesting Conclusion
 All 4 assets comfortably satisfy the statistical threshold p > 0.05, confirming zero capital under-allocation.
 The Kupiec Proportion of Failures Test confirms the model's 95% Value-at-Risk (VaR) forecasts are highly reliable and compliant with international Basel III banking standards.
 
-CRISP-DM Phase 6 — Deployment: Full-Stack Web App Architecture
+Deployment: Full-Stack Web App Architecture
 01. FRONTEND
 Glassmorphic SPA built with HTML5, CSS3, Plotly.js, and PWA support.
 02. BACKEND API
@@ -128,7 +127,7 @@ LightGBM on-demand model inference leveraging serialized volatility_lightgbm_v1.
 04. AUTOMATED GUARDRAILS
 Strict Pydantic validation layers prevent invalid ticker inputs and block unverified financial advice, ensuring enterprise-grade compliance and system robustness.
 
-CRISP-DM Phase 6 — Decoupled Production Cloud Deployment Strategy
+Decoupled Production Cloud Deployment Strategy
 01. FRONTEND LAYER
 Vercel Global Edge CDN, automatic HTTPS, and SPA routing via vercel.json.
 02. BACKEND LAYER
@@ -136,7 +135,7 @@ Railway Uvicorn ASGI container running Python 3.11 with automated Procfile build
 03. DECOUPLED ROUTING
 The client-side app.js automatically inspects window.location.hostname to seamlessly auto-route API calls between localhost and Railway backend.
 
-CRISP-DM Phase 6 — Automated Institutional PDF Audit Report Generation
+Automated Institutional PDF Audit Report Generation
 01. ENGINE
 FPDF2 dynamic PDF generation engine integrated directly into Python backend.
 02. OUTPUT
@@ -161,7 +160,7 @@ Increase cash buffers by 5% when VADER sentiment compound score drops below -0.3
 
 Project Conclusion & v1.3 Development Roadmap
 Project Achievements:
-• Complete 6-phase CRISP-DM lifecycle execution
+• Complete end-to-end quantitative risk engine implementation
 • Certified Basel III 95% VaR & LightGBM EVT volatility model
 • Production-ready decoupled web application with PDF reporting engine
 
