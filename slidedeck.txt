@@ -121,10 +121,12 @@ Deployment: Full-Stack Web App Architecture
 01. FRONTEND
 Glassmorphic SPA built with HTML5, CSS3, Plotly.js, and PWA support.
 02. BACKEND API
-FastAPI Python backend API handling fast /analyze and /export-pdf endpoints.
+FastAPI Python backend API handling fast /api/v1/risk/analyze and /api/v1/risk/export-pdf endpoints.
 03. ML RUNTIME
 LightGBM on-demand model inference leveraging serialized volatility_lightgbm_v1.2.pkl.
-04. AUTOMATED GUARDRAILS
+04. PDF REPORT ENGINE
+ReportLab-powered PDF generation via reportlab.platypus for institutional audit reports.
+05. AUTOMATED GUARDRAILS
 Strict Pydantic validation layers prevent invalid ticker inputs and block unverified financial advice, ensuring enterprise-grade compliance and system robustness.
 
 Decoupled Production Cloud Deployment Strategy
@@ -137,7 +139,7 @@ The client-side app.js automatically inspects window.location.hostname to seamle
 
 Automated Institutional PDF Audit Report Generation
 01. ENGINE
-FPDF2 dynamic PDF generation engine integrated directly into Python backend.
+ReportLab dynamic PDF generation engine integrated directly into Python backend.
 02. OUTPUT
 Reports/ secure and structured local directory storage for generated PDF files.
 03. TRIGGER
