@@ -1,6 +1,6 @@
 # Dockerfile for Railway Deployment
 # Deterministic build environment that bypasses Nixpacks configuration issues
-FROM python:3.11-slim
+FROM python:3.13-slim
 
 # Install system dependencies (libgomp1 is required by LightGBM for OpenMP)
 RUN apt-get update && apt-get install -y \
