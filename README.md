@@ -114,7 +114,6 @@ Model reliability is validated using the **Kupiec Likelihood Ratio (LR) Test** o
 │   ├── core/                   # System Config & Pydantic Validation Guardrails
 │   ├── services/               # Quantitative Risk Engine & LightGBM Inference
 │   └── utils/                  # VADER News Feed & FPDF2 PDF Generator Helpers
-├── docs/                       # Project Specifications & Approved PRD v1.2
 ├── models/                     # Serialized Machine Learning Artifacts
 │   ├── model_metadata_v1.2.json# LightGBM Hyperparameters & Backtest Metrics
 │   └── volatility_lightgbm_v1.2.pkl # Trained LightGBM Model Weights (~267 KB)
@@ -131,7 +130,6 @@ Model reliability is validated using the **Kupiec Likelihood Ratio (LR) Test** o
 ├── Procfile                    # Production Deployment Process Spec (Railway/Heroku)
 ├── vercel.json                 # Vercel Production Routing & CDN Configuration
 ├── requirements.txt            # Python Package Dependencies
-├── Institutional CRISP-DM Quantitative Audit & Risk Intelligence Report - English.txt # Slide Script Text
 └── README.md                   # Institutional Project Documentation
 ```
 
@@ -169,9 +167,7 @@ python main.py
 ---
 
 ## 📑 Key Project Documentation
-- 📄 [PRD v1.2 Specification](docs/PRD%20-%20Autonomous%20Financial%20%26%20Market%20Risk%20Intelligence%20Agent%20%28v1.2%20Updated%29.md)
 - 📊 [Google Slides Executive Presentation Deck](https://docs.google.com/presentation/d/1s-9V5qij_b4c32wSIoLsCBXZLi_TyKGbWp_tV5MsFJA/edit?usp=sharing)
-- 📜 [Plain Text Slide Script](Institutional%20CRISP-DM%20Quantitative%20Audit%20%26%20Risk%20Intelligence%20Report%20-%20English.txt)
 
 ---
 
