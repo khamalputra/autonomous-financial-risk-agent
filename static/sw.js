@@ -62,14 +62,14 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-// Fetch Event - Stale-while-revalidate for static assets, Network-first for API
+// Fetch Event - Network-First for HTML/CSS/JS/API (Auto-update on Vercel/Railway), Cache-First for static icons/CDNs
 self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url);
 
   // Ignore non-GET requests
   if (event.request.method !== 'GET') return;
 
-  // Handle API Requests: Network-First with fallback
+  // 1. API Requests: Network-First with cache fallback
   if (url.pathname.startsWith('/api/')) {
     event.respondWith(
       fetch(event.request)
@@ -85,20 +85,41 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Handle Static & App Shell: Stale-While-Revalidate
-  event.respondWith(
-    caches.match(event.request).then((cachedResponse) => {
-      const fetchPromise = fetch(event.request)
+  // 2. App Shell & Code Files (HTML, JS, CSS): Network-First (Ensures instant deployment updates without manual reinstall/cache clearing)
+  const isCodeFile = url.pathname === '/' || 
+                     url.pathname.endsWith('.html') || 
+                     url.pathname.endsWith('.js') || 
+                     url.pathname.endsWith('.css') ||
+                     url.pathname === '/manifest.json';
+
+  if (isCodeFile) {
+    event.respondWith(
+      fetch(event.request)
         .then((networkResponse) => {
-          if (networkResponse && (networkResponse.status === 200 || networkResponse.type === 'opaque')) {
+          if (networkResponse && networkResponse.status === 200) {
             const responseClone = networkResponse.clone();
             caches.open(CACHE_NAME).then((cache) => cache.put(event.request, responseClone));
           }
           return networkResponse;
         })
-        .catch(() => cachedResponse);
+        .catch(() => caches.match(event.request))
+    );
+    return;
+  }
 
-      return cachedResponse || fetchPromise;
+  // 3. Static Assets (Icons, Images, Fonts, CDNs): Cache-First with Network fallback
+  event.respondWith(
+    caches.match(event.request).then((cachedResponse) => {
+      if (cachedResponse) {
+        return cachedResponse;
+      }
+      return fetch(event.request).then((networkResponse) => {
+        if (networkResponse && (networkResponse.status === 200 || networkResponse.type === 'opaque')) {
+          const responseClone = networkResponse.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, responseClone));
+        }
+        return networkResponse;
+      });
     })
   );
 });

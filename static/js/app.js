@@ -914,8 +914,36 @@ document.addEventListener('DOMContentLoaded', () => {
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
             navigator.serviceWorker.register('/sw.js')
-                .then(reg => console.log('[ServiceWorker] Registered with scope:', reg.scope))
+                .then(reg => {
+                    console.log('[ServiceWorker] Registered with scope:', reg.scope);
+                    
+                    // Periodically check for Service Worker updates every 60 minutes
+                    setInterval(() => {
+                        reg.update();
+                    }, 60 * 60 * 1000);
+
+                    // Detect if a new Service Worker is waiting and activate it immediately
+                    reg.addEventListener('updatefound', () => {
+                        const newWorker = reg.installing;
+                        if (newWorker) {
+                            newWorker.addEventListener('statechange', () => {
+                                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                    console.log('[ServiceWorker] New update available, applying seamlessly...');
+                                }
+                            });
+                        }
+                    });
+                })
                 .catch(err => console.warn('[ServiceWorker] Registration failed:', err));
+
+            // Auto-reload page seamlessly when Service Worker takes control after a Vercel deployment
+            let refreshing = false;
+            navigator.serviceWorker.addEventListener('controllerchange', () => {
+                if (!refreshing) {
+                    refreshing = true;
+                    window.location.reload();
+                }
+            });
         });
     }
 
