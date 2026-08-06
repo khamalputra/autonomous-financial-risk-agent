@@ -1,0 +1,5 @@
+# Nixpacks configuration for Railway deployment
+# LightGBM requires libgomp1 (OpenMP) to run multi-threaded calculations
+
+[phases.setup]
+aptPkgs = ["libgomp1"]
