@@ -109,26 +109,30 @@ Model reliability is validated using the **Kupiec Likelihood Ratio (LR) Test** o
 
 ```text
 .
-├── app/                        # FastAPI Backend Application
+├── app/                        # FastAPI Backend Application Core
 │   ├── api/v1/endpoints/       # REST API Endpoints (/analyze, /export-pdf)
-│   ├── core/                   # Configuration & Pydantic Guardrails
-│   ├── services/               # Risk Engine & LightGBM Inference Logic
-│   └── utils/                  # News Feed & PDF Generator Helpers
-├── docs/                       # Project Documentation & PRD Specification
-├── models/                     # Serialized Model Artifacts
-│   ├── model_metadata_v1.2.json# Hyperparameters & Performance Metrics
-│   └── volatility_lightgbm_v1.2.pkl # LightGBM Trained Model Weights
-├── notebooks/                  # CRISP-DM Exploration & Audit Notebooks
-│   └── plots/                  # Generated Diagnostic Charts & Visuals
-├── reports/                    # Target Output Directory for PDF Risk Audits
-├── static/                     # SPA Frontend Web Assets (CSS, JS, Icons)
-│   ├── css/style.css           # Custom Glassmorphic Responsive Styles
-│   ├── js/app.js               # Application Logic & Plotly Visualization
-│   └── sw.js                   # Network-First PWA Service Worker
-├── index.html                  # Single Page Application HTML Entry Point
-├── main.py                     # FastAPI Application Launcher
-├── requirements.txt            # Python Dependencies
-└── README.md                   # Machine Learning Project Documentation
+│   ├── core/                   # System Config & Pydantic Validation Guardrails
+│   ├── services/               # Quantitative Risk Engine & LightGBM Inference
+│   └── utils/                  # VADER News Feed & FPDF2 PDF Generator Helpers
+├── docs/                       # Project Specifications & Approved PRD v1.2
+├── models/                     # Serialized Machine Learning Artifacts
+│   ├── model_metadata_v1.2.json# LightGBM Hyperparameters & Backtest Metrics
+│   └── volatility_lightgbm_v1.2.pkl # Trained LightGBM Model Weights (~267 KB)
+├── notebooks/                  # CRISP-DM Exploration Notebooks & Analysis
+│   └── plots/                  # Authoritative Visualizations & Charts
+├── reports/                    # Target Output Directory for Exported PDF Audits
+├── static/                     # SPA Frontend Web Assets (CSS, JS, PWA Icons)
+│   ├── css/style.css           # Glassmorphic Responsive Stylesheet
+│   ├── js/app.js               # Web App Frontend Logic & Plotly Integrations
+│   └── sw.js                   # Network-First PWA Service Worker (Auto-Update)
+├── tests/                      # Automated Test Suite & API Validation
+├── index.html                  # Single Page Application Frontend Entry Point
+├── main.py                     # FastAPI Application Launcher & Entry Point
+├── Procfile                    # Production Deployment Process Spec (Railway/Heroku)
+├── vercel.json                 # Vercel Production Routing & CDN Configuration
+├── requirements.txt            # Python Package Dependencies
+├── Institutional CRISP-DM Quantitative Audit & Risk Intelligence Report - English.txt # Slide Script Text
+└── README.md                   # Institutional Project Documentation
 ```
 
 ---
