@@ -136,7 +136,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Decoupled Hosting Support (Vercel Frontend + Railway Backend)
     const API_BASE_URL = window.location.hostname.includes('vercel.app') 
-        ? 'https://your-railway-app.up.railway.app' 
+        ? 'https://autonomous-financial-risk-agent-production.up.railway.app' 
         : '';
 
     // API Call Trigger
