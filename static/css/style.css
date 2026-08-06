@@ -277,6 +277,45 @@ button:active, .nav-pill:active, .mobile-nav-item:active {
   box-shadow: 0 4px 14px rgba(83, 71, 185, 0.35);
 }
 
+@media (min-width: 1025px) {
+  .pwa-install-banner {
+    left: auto;
+    right: 24px;
+    width: 380px;
+    max-width: calc(100vw - 48px);
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 18px;
+    gap: 16px;
+    border-radius: var(--radius-lg);
+    box-shadow: 0 12px 36px rgba(15, 23, 42, 0.16);
+  }
+  .pwa-install-banner.visible {
+    bottom: 24px;
+  }
+  .pwa-banner-content {
+    flex: 1;
+    min-width: 0;
+  }
+  .pwa-banner-actions {
+    flex-shrink: 0;
+    gap: 8px;
+  }
+  .pwa-banner-dismiss {
+    flex: none;
+    padding: 0 12px;
+    height: 36px;
+    white-space: nowrap;
+  }
+  .pwa-banner-install {
+    flex: none;
+    padding: 0 16px;
+    height: 36px;
+    white-space: nowrap;
+  }
+}
+
 /* Bottom Nav */
 .mobile-bottom-nav {
   position: fixed; bottom: 0; left: 0; right: 0;
