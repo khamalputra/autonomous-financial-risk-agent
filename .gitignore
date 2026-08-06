@@ -98,6 +98,7 @@ build/
 
 # Models & Data Cache
 *.pkl
+!models/*.pkl
 *.onnx
 *.joblib
 data/raw/*
