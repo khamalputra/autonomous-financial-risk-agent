@@ -1,198 +1,4 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // i18n Translation Dictionary
-    const translations = {
-        en: {
-            brand_subtitle: "Autonomous Market Risk Intelligence Terminal",
-            nav_risk: "Risk Analytics",
-            nav_compliance: "Compliance",
-            nav_modelspec: "Model Spec",
-            nav_guide: "Beginner Guide",
-            sidebar_title: "Portfolio Parameters",
-            target_asset: "Target Asset Symbol",
-            portfolio_val: "Portfolio Value (USD)",
-            confidence_lbl: "VaR Confidence Level",
-            btn_scan: "Run Risk Analysis",
-            model_arch: "Model Architecture",
-            regressor_lbl: "Regressor:",
-            evt_cap_lbl: "EVT Cap Threshold:",
-            backtest_std: "Backtest Standard:",
-            data_window: "Data Window:",
-            data_window_val: "1,400 Days (Real)",
-            interp_title: "Executive Risk Interpreter (Plain Language Summary)",
-            interp_badge: "Automated Insights",
-            interp_vol_head: "Price Volatility Estimate:",
-            interp_var_head: "Maximum Daily Loss Limit (VaR 95%):",
-            interp_basel_head: "Model Regulatory Reliability (Basel III):",
-            kpi_pred_vol: "Predicted Volatility (5-Day Forward)",
-            tag_5d_vol: "5D Volatility",
-            kpi_var: "Value-at-Risk (1-Day VaR)",
-            kpi_es: "Expected Shortfall (ES)",
-            tag_tail_loss: "Tail Loss",
-            kpi_kupiec: "Kupiec POF Backtest",
-            chart_subtitle: "Out-of-sample predicted annualized volatility vs empirical realized metrics",
-            tab_forecast: "Volatility Forecast",
-            tab_var: "VaR Backtest",
-            tab_returns: "Log Returns",
-            news_header: "Live News Headline Stream & FinBERT Sentiment",
-            audit_header: "Regulatory Audit Summary",
-            th_param: "Metric Parameter",
-            th_emp: "Empirical Value",
-            th_thresh: "Regulatory Threshold",
-            th_status: "Status",
-            td_violations: "Out-of-Sample Violations",
-            td_5pct_expected: "5.00% Expected",
-            td_kupiec_lr: "Kupiec POF Likelihood Ratio (LR POF)",
-            td_qlike: "Patton QLIKE Loss Score",
-            td_minimized: "Minimized",
-            td_evt_cap: "EVT Extreme Volatility Cap",
-            td_995_percentile: "99.5th Percentile",
-            comp_header: "Basel III Regulatory Backtest & Compliance Matrix",
-            comp_desc: "Multi-quantile Likelihood Ratio tests evaluated against the Basel Committee Traffic Light System.",
-            export_pdf: "Export PDF Audit",
-            th_conf: "Confidence Level (1-α)",
-            th_exp_rate: "Expected Violation Rate",
-            th_obs_viol: "Observed Violations",
-            th_obs_rate: "Observed Rate",
-            th_kupiec_lr_stat: "Kupiec POF LR Stat",
-            th_pval: "p-Value",
-            th_basel_zone: "Basel Traffic Zone",
-            stress_header: "Historical Extreme Event Stress Scenarios",
-            badge_hypo_shocks: "Hypothetical Shocks",
-            th_stress_scenario: "Stress Scenario Name",
-            th_sim_shock: "Simulated Return Shock",
-            th_stress_vol: "Stressed Volatility Prediction",
-            th_stress_loss: "Stressed Portfolio Loss ($)",
-            th_cap_impact: "Capital Reserve Impact",
-            scen_lehman: "2008 Lehman Liquidity Crunch",
-            scen_covid: "2020 COVID Market Panic Shock",
-            scen_crypto: "Crypto Liquidity Deleveraging Shock",
-            spec_header: "LightGBM Hyperparameters & Setup",
-            th_hyperparam: "Hyperparameter",
-            th_cfg_val: "Configured Value",
-            th_arch_func: "Architectural Function",
-            func_mse: "Mean Squared Error Loss Optimization",
-            func_gbdt: "Gradient Boosted Decision Trees",
-            func_trees: "Number of Sequential Trees Fitted",
-            func_lr: "Step-size Shrinkage Rate",
-            func_depth: "Tree Structural Complexity Bounds",
-            func_reg: "L1 & L2 Regularization Penalties",
-            feat_imp_header: "Predictor Feature Gain Importance",
-            badge_9feat: "9 Features",
-            guide_title: "Beginner Market Risk Glossary & Guide",
-            badge_beginner: "Quick Guide",
-            guide_desc: "Simple explanations for the 4 core concepts used in this risk terminal without complex econometric formulas.",
-            glos_vol_title: "1. Volatility",
-            glos_vol_body: "What does it mean? How fast and how drastically an asset price swings up and down.\nAnalogy: Like weather. Low volatility is a calm sunny day (stable prices); high volatility is a thunderstorm (wild price swings).",
-            glos_var_title: "2. Value-at-Risk (VaR 95%)",
-            glos_var_body: "What does it mean? The estimated maximum dollar loss your portfolio could suffer tomorrow under normal market conditions with 95% certainty.\nAnalogy: If your VaR 95% is $20,000, there is a 95 out of 100 day guarantee your daily loss won't exceed $20,000.",
-            glos_es_title: "3. Expected Shortfall (ES)",
-            glos_es_body: "What does it mean? The average loss if a worst-case crisis (the remaining 5% extreme condition) actually happens beyond your VaR.\nAnalogy: If VaR is your 'umbrella limit', ES tells you how wet you get if a hurricane breaks your umbrella.",
-            glos_kupiec_title: "4. Kupiec POF Test (Basel III)",
-            glos_kupiec_body: "What does it mean? A health and accuracy check required by international banking regulators.\nAnalogy: Like a vehicle safety certificate. Passing into the Green Zone proves the risk AI model is accurate and trustworthy.",
-            loader_text: "Executing Risk Engine & Model Inference...",
-            loader_subtext: "Fetching empirical market prices & NLP headline scoring",
-            title_forecast: "Volatility Forecast Tracking",
-            title_var: "Filtered Historical Simulation (FHS) VaR Regulatory Backtest",
-            title_returns: "Daily Log-Return Dispersion"
-        },
-        id: {
-            brand_subtitle: "Terminal Intelijen Risiko Pasar Otonom",
-            nav_risk: "Analisis Risiko",
-            nav_compliance: "Kepatuhan Regulasi",
-            nav_modelspec: "Spesifikasi Model",
-            nav_guide: "Panduan Pemula",
-            sidebar_title: "Parameter Portofolio",
-            target_asset: "Simbol Aset Target",
-            portfolio_val: "Nilai Portofolio (USD)",
-            confidence_lbl: "Tingkat Konfidensi VaR",
-            btn_scan: "Jalankan Analisis Risiko",
-            model_arch: "Arsitektur Model",
-            regressor_lbl: "Model Regresi:",
-            evt_cap_lbl: "Batas Ambang EVT:",
-            backtest_std: "Standar Backtest:",
-            data_window: "Jendela Data:",
-            data_window_val: "1.400 Hari (Riil)",
-            interp_title: "Executive Risk Interpreter (Panduan Bahasa Awam)",
-            interp_badge: "Analisis Otomatis",
-            interp_vol_head: "Estimasi Gejolak Harga (Volatilitas):",
-            interp_var_head: "Batas Kerugian Maksimal Harian (VaR 95%):",
-            interp_basel_head: "Tingkat Kepercayaan Model (Basel III):",
-            kpi_pred_vol: "Volatilitas Terprediksi (5-Hari Ke Depan)",
-            tag_5d_vol: "Volatilitas 5D",
-            kpi_var: "Value-at-Risk (VaR 1-Hari)",
-            kpi_es: "Expected Shortfall (ES)",
-            tag_tail_loss: "Ekor Risiko",
-            kpi_kupiec: "Uji Backtest Kupiec POF",
-            chart_subtitle: "Volatilitas terprediksi out-of-sample vs metrik realisasi empiris",
-            tab_forecast: "Prediksi Volatilitas",
-            tab_var: "Backtest VaR",
-            tab_returns: "Return Harian",
-            news_header: "Berita Keuangan Langsung & Skor Sentimen FinBERT",
-            audit_header: "Ringkasan Audit Regulasi",
-            th_param: "Parameter Metrik",
-            th_emp: "Nilai Empiris",
-            th_thresh: "Ambang Batas Regulasi",
-            th_status: "Status",
-            td_violations: "Pelanggaran Out-of-Sample",
-            td_5pct_expected: "5,00% Ekspektasi",
-            td_kupiec_lr: "Rasio Likelihood Kupiec POF (LR POF)",
-            td_qlike: "Skor Kerugian Patton QLIKE",
-            td_minimized: "Terminimalkan",
-            td_evt_cap: "Batas Volatilitas Ekstrim EVT",
-            td_995_percentile: "Persentil ke-99,5",
-            comp_header: "Matriks Kepatuhan & Backtest Regulasi Basel III",
-            comp_desc: "Uji Likelihood Ratio multikuantil terhadap Sistem Lampu Lalu Lintas Komite Basel.",
-            export_pdf: "Ekspor Laporan PDF",
-            th_conf: "Tingkat Konfidensi (1-α)",
-            th_exp_rate: "Tingkat Pelanggaran Ekspektasi",
-            th_obs_viol: "Pelanggaran Terobservasi",
-            th_obs_rate: "Tingkat Terobservasi",
-            th_kupiec_lr_stat: "Statistik LR Kupiec POF",
-            th_pval: "Nilai-p",
-            th_basel_zone: "Zona Lalu Lintas Basel",
-            stress_header: "Skenario Stress Testing Peristiwa Ekstrim Historis",
-            badge_hypo_shocks: "Guncangan Hipotesis",
-            th_stress_scenario: "Nama Skenario Stress",
-            th_sim_shock: "Simulasi Guncangan Return",
-            th_stress_vol: "Prediksi Volatilitas Tertekankan",
-            th_stress_loss: "Kerugian Portofolio Tertekankan ($)",
-            th_cap_impact: "Dampak Cadangan Modal",
-            scen_lehman: "Krisus Likuiditas Lehman 2008",
-            scen_covid: "Guncangan Panik Pasar COVID 2020",
-            scen_crypto: "Guncangan Deleveraging Likuiditas Kripto",
-            spec_header: "Setup & Hiperparameter LightGBM",
-            th_hyperparam: "Hiperparameter",
-            th_cfg_val: "Nilai Terkonfigurasi",
-            th_arch_func: "Fungsi Arsitektural",
-            func_mse: "Optimasi Kerugian Mean Squared Error",
-            func_gbdt: "Pohon Keputusan Ter-Boost (GBDT)",
-            func_trees: "Jumlah Pohon Sekuensial Terpasang",
-            func_lr: "Laju Penyusutan Ukuran Langkah",
-            func_depth: "Batas Kompleksitas Struktur Pohon",
-            func_reg: "Penalti Regulerisasi L1 & L2",
-            feat_imp_header: "Tingkat Kepentingan Fitur Prediktor (Gain Importance)",
-            badge_9feat: "9 Fitur",
-            guide_title: "Panduan Istilah Risiko Pasar untuk Pemula",
-            badge_beginner: "Panduan Ringkas",
-            guide_desc: "Penjelasan sederhana mengenai 4 istilah utama yang digunakan di terminal risiko ini tanpa rumus ekonometrika rumit.",
-            glos_vol_title: "1. Volatilitas (Volatility)",
-            glos_vol_body: "Apa artinya? Seberapa cepat dan seberapa besar harga suatu aset naik atau turun.\nAnalogi Sederhana: Bayangkan seperti cuaca. Volatilitas rendah seperti hari cerah (harga stabil), sedangkan volatilitas tinggi seperti badai (harga naik turun secara drastis).",
-            glos_var_title: "2. Value-at-Risk (VaR 95%)",
-            glos_var_body: "Apa artinya? Angka perkiraan kerugian maksimal yang mungkin Anda alami besok dalam kondisi pasar normal dengan kepastian 95%.\nAnalogi Sederhana: Jika VaR 95% Anda adalah $20.000, artinya ada kepastian 95 dari 100 hari bahwa kerugian harian Anda tidak akan melebihi $20.000.",
-            glos_es_title: "3. Expected Shortfall (ES)",
-            glos_es_body: "Apa artinya? Rata-rata kerugian jika skenario terburuk (5% kondisi ekstrim/krisis) benar-benar terjadi di luar batas VaR.\nAnalogi Sederhana: Jika VaR adalah 'batas payung', maka ES memberitahu Anda seberapa basah Anda jika terjadi 'badai topan' yang merusak payung tersebut.",
-            glos_kupiec_title: "4. Uji Kupiec POF (Basel III)",
-            glos_kupiec_body: "Apa artinya? Tes kesehatan dan akurasi model menurut standar perbankan internasional.\nAnalogi Sederhana: Seperti hasil uji kelayakan kendaraan (KIR). Jika masuk Zona Hijau (Green Zone), artinya mesin peramal risiko terbukti akurat dan terpercaya.",
-            loader_text: "Mengeksekusi Risk Engine & Inferensi Model...",
-            loader_subtext: "Mengambil harga pasar empiris & skor sentimen NLP",
-            title_forecast: "Pelacakan Prediksi Volatilitas",
-            title_var: "Backtest Regulasi Filtered Historical Simulation (FHS) VaR",
-            title_returns: "Dispersi Return Harian"
-        }
-    };
-
-    let currentLang = localStorage.getItem('preferred_language') || 'en';
-
     // DOM Elements
     const tickerSelect = document.getElementById('tickerSelect');
     const portfolioRange = document.getElementById('portfolioRange');
@@ -202,37 +8,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnScan = document.getElementById('btnScan');
     const btnExportPdf = document.getElementById('btnExportPdf');
     const loaderOverlay = document.getElementById('loaderOverlay');
-
-    // Language Switcher Buttons
-    const langEN = document.getElementById('langEN');
-    const langID = document.getElementById('langID');
-
-    if (langEN) langEN.addEventListener('click', () => setLanguage('en'));
-    if (langID) langID.addEventListener('click', () => setLanguage('id'));
-
-    function setLanguage(lang) {
-        currentLang = lang;
-        localStorage.setItem('preferred_language', lang);
-        if (langEN) langEN.classList.toggle('active', lang === 'en');
-        if (langID) langID.classList.toggle('active', lang === 'id');
-        applyLanguage(lang);
-    }
-
-    function applyLanguage(lang) {
-        const dict = translations[lang] || translations.en;
-        document.querySelectorAll('[data-i18n]').forEach(el => {
-            const key = el.getAttribute('data-i18n');
-            if (dict[key]) {
-                el.textContent = dict[key];
-            }
-        });
-
-        if (cachedRiskData) {
-            updateKPIs(cachedRiskData);
-            updateExecutiveInterpreter(cachedRiskData);
-            switchTab(activeTab);
-        }
-    }
 
     // Navigation Pills
     const navRiskAnalytics = document.getElementById('navRiskAnalytics');
@@ -271,6 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const tblViolationTag = document.getElementById('tblViolationTag');
     const tblLrPof = document.getElementById('tblLrPof');
     const tblEvtCap = document.getElementById('tblEvtCap');
+    const tblEvtCapMobile = document.getElementById('tblEvtCapMobile');
     const specEvtCap = document.getElementById('specEvtCap');
     const newsCountBadge = document.getElementById('newsCountBadge');
 
@@ -303,17 +79,18 @@ document.addEventListener('DOMContentLoaded', () => {
     let importanceChart = null;
     let cachedRiskData = null;
 
-    // View Navigation Switcher
-    if (navRiskAnalytics) navRiskAnalytics.addEventListener('click', () => switchView('analytics'));
-    if (navCompliance) navCompliance.addEventListener('click', () => switchView('compliance'));
-    if (navModelSpec) navModelSpec.addEventListener('click', () => switchView('modelspec'));
-    if (navGuide) navGuide.addEventListener('click', () => switchView('guide'));
+    // View Navigation Switcher for both Desktop Nav Pills & Mobile Bottom Nav Items
+    document.querySelectorAll('[data-view]').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const targetView = btn.getAttribute('data-view');
+            if (targetView) switchView(targetView);
+        });
+    });
 
     function switchView(viewName) {
-        if (navRiskAnalytics) navRiskAnalytics.classList.toggle('active', viewName === 'analytics');
-        if (navCompliance) navCompliance.classList.toggle('active', viewName === 'compliance');
-        if (navModelSpec) navModelSpec.classList.toggle('active', viewName === 'modelspec');
-        if (navGuide) navGuide.classList.toggle('active', viewName === 'guide');
+        document.querySelectorAll('[data-view]').forEach(el => {
+            el.classList.toggle('active', el.getAttribute('data-view') === viewName);
+        });
 
         if (viewRiskAnalytics) viewRiskAnalytics.classList.toggle('active', viewName === 'analytics');
         if (viewCompliance) viewCompliance.classList.toggle('active', viewName === 'compliance');
@@ -357,21 +134,42 @@ document.addEventListener('DOMContentLoaded', () => {
     if (tabVaR) tabVaR.addEventListener('click', () => switchTab('var'));
     if (tabReturns) tabReturns.addEventListener('click', () => switchTab('returns'));
 
+
+
     if (btnScan) btnScan.addEventListener('click', runRiskScan);
     if (btnExportPdf) btnExportPdf.addEventListener('click', exportPdfReport);
 
-    // Initial Language Setup & Load
-    setLanguage(currentLang);
+    // Initial Load
     runRiskScan();
 
+    // Decoupled Hosting Support (Vercel Frontend + Railway Backend)
+    const API_BASE_URL = window.location.hostname.includes('vercel.app') 
+        ? 'https://your-railway-app.up.railway.app' 
+        : '';
+
+    // API Call Trigger
+    window.runRiskScan = runRiskScan;
     async function runRiskScan() {
-        showLoader(true);
+        const refreshIcon = document.querySelector('.icon-btn i.fa-rotate');
+        if (refreshIcon) refreshIcon.classList.add('fa-spin');
+        
+        showLoader(true, `Analyzing Market Risk for ${ticker}...`, 'Running LightGBM Volatility Model & Sentiment Scoring');
+
         const ticker = tickerSelect ? tickerSelect.value : 'AAPL';
-        const portfolioValue = portfolioRange ? parseFloat(portfolioRange.value) : 1000000.0;
+        let portfolioValue = 1000000;
+        if (portfolioInput && portfolioInput.value) {
+            const rawVal = parseFloat(portfolioInput.value.replace(/,/g, ''));
+            if (!isNaN(rawVal) && rawVal > 0) {
+                portfolioValue = rawVal;
+            }
+        } else if (portfolioRange) {
+            portfolioValue = parseFloat(portfolioRange.value);
+        }
+
         const confidenceLevel = confidenceSelect ? parseFloat(confidenceSelect.value) : 0.95;
 
         try {
-            const response = await fetch('/api/v1/risk/analyze', {
+            const response = await fetch(`${API_BASE_URL}/api/v1/risk/analyze`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -394,11 +192,15 @@ document.addEventListener('DOMContentLoaded', () => {
             renderChart(data, activeTab);
             renderNews(data.recent_news);
 
+            // Switch view automatically to Risk Analytics
+            switchView('analytics');
+
         } catch (err) {
             console.error("Risk scan failed:", err);
-            alert("Failed to analyze market risk: " + err.message);
         } finally {
             showLoader(false);
+            const refreshIcon = document.querySelector('.icon-btn i.fa-rotate');
+            if (refreshIcon) refreshIcon.classList.remove('fa-spin');
         }
     }
 
@@ -410,30 +212,24 @@ document.addEventListener('DOMContentLoaded', () => {
         const confPct = ((data.confidence_level || 0.95) * 100).toFixed(0);
 
         if (interpVolText) {
-            interpVolText.textContent = currentLang === 'id' 
-                ? `Aset ${data.ticker} diproyeksikan memiliki gejolak harga sebesar ${volPct}% per tahun. Ini tergolong ${volPct > 35 ? 'tinggi (fluktuatif)' : 'sedang/stabil'}.`
-                : `Asset ${data.ticker} is projected to experience ${volPct}% annual price volatility. This indicates ${volPct > 35 ? 'high market volatility' : 'moderate/stable price action'}.`;
+            interpVolText.textContent = `Asset ${data.ticker} is projected to experience ${volPct}% annual price volatility. This indicates ${volPct > 35 ? 'high market volatility' : 'moderate/stable price action'}.`;
         }
         if (interpVarText) {
-            interpVarText.textContent = currentLang === 'id'
-                ? `Dengan modal $${(data.portfolio_value || 1000000).toLocaleString('en-US')}, ada kepastian ${confPct}% bahwa kerugian Anda besok tidak melebihi ${varUsd}. Jika terjadi krisis ekstrim (5% kondisi terburuk), rata-rata rugi mencapai ${esUsd}.`
-                : `With $${(data.portfolio_value || 1000000).toLocaleString('en-US')} capital, there is ${confPct}% certainty that your 1-day loss won't exceed ${varUsd}. In extreme crisis events (worst 5%), expected tail loss averages ${esUsd}.`;
+            interpVarText.textContent = `With $${(data.portfolio_value || 1000000).toLocaleString('en-US')} capital, there is ${confPct}% certainty that your 1-day loss won't exceed ${varUsd}. In extreme crisis events (worst 5%), expected tail loss averages ${esUsd}.`;
         }
         if (interpBaselText) {
-            interpBaselText.textContent = currentLang === 'id'
-                ? `Model peramalan ini masuk dalam ZONA HIJAU Basel III (p = ${(data.kupiec_p_value || 0.85).toFixed(4)} > 0.05). Artinya, model terbukti akurat dan dapat dipercaya menurut standar perbankan dunia.`
-                : `The forecast model is certified in the Basel III GREEN ZONE (p = ${(data.kupiec_p_value || 0.85).toFixed(4)} > 0.05). This confirms high predictive reliability under global banking standards.`;
+            interpBaselText.textContent = `The forecast model is certified in the Basel III GREEN ZONE (p = ${(data.kupiec_p_value || 0.85).toFixed(4)} > 0.05). This confirms high predictive reliability under global banking standards.`;
         }
     }
 
     async function exportPdfReport() {
-        showLoader(true);
+        showLoader(true, 'Generating PDF Audit Report...', 'Formatting Institutional Executive Summary & Compliance Data');
         const ticker = tickerSelect ? tickerSelect.value : 'AAPL';
         const portfolioValue = portfolioRange ? parseFloat(portfolioRange.value) : 1000000.0;
         const confidenceLevel = confidenceSelect ? parseFloat(confidenceSelect.value) : 0.95;
 
         try {
-            const response = await fetch('/api/v1/risk/export-pdf', {
+            const response = await fetch(`${API_BASE_URL}/api/v1/risk/export-pdf`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -467,74 +263,232 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function updateKPIs(data) {
         if (!data) return;
-        const dict = translations[currentLang] || translations.en;
         if (kpiVol) kpiVol.textContent = (data.predicted_volatility_annualized * 100).toFixed(2) + '%';
-        if (kpiVolDaily) kpiVolDaily.textContent = `${currentLang === 'id' ? 'Harian' : 'Daily'}: ${(data.predicted_volatility_daily * 100).toFixed(2)}%`;
+        if (kpiVolDaily) kpiVolDaily.textContent = `Daily: ${(data.predicted_volatility_daily * 100).toFixed(2)}%`;
         const capPct = (data.evt_cap_threshold * 100).toFixed(2) + '%';
-        if (kpiEvtCap) kpiEvtCap.textContent = `${currentLang === 'id' ? 'Batas' : 'Cap'}: ${capPct}`;
+        if (kpiEvtCap) kpiEvtCap.textContent = `Cap: ${capPct}`;
         if (specEvtCap) specEvtCap.textContent = capPct;
         if (tblEvtCap) tblEvtCap.textContent = capPct;
+        if (tblEvtCapMobile) tblEvtCapMobile.textContent = capPct;
 
         if (kpiVar) kpiVar.textContent = '$' + (data.daily_var_usd || 0).toLocaleString('en-US');
-        if (kpiVarPct) kpiVarPct.textContent = `${data.daily_var_pct}% ${currentLang === 'id' ? 'dari Portofolio' : 'of Portfolio'}`;
-        if (kpiVarConfTag) kpiVarConfTag.textContent = `${(data.confidence_level * 100).toFixed(0)}% ${currentLang === 'id' ? 'Konf' : 'Conf'}`;
+        if (kpiVarPct) kpiVarPct.textContent = `${data.daily_var_pct}% of Portfolio`;
+        if (kpiVarConfTag) kpiVarConfTag.textContent = `${(data.confidence_level * 100).toFixed(0)}% Conf`;
 
         if (kpiEs) kpiEs.textContent = '$' + (data.daily_es_usd || 0).toLocaleString('en-US');
-        if (kpiEsPct) kpiEsPct.textContent = `${data.daily_es_pct}% ${currentLang === 'id' ? 'Ekor Risiko' : 'Tail Loss'}`;
+        if (kpiEsPct) kpiEsPct.textContent = `${data.daily_es_pct}% Tail Loss`;
 
         if (kpiKupiec) kpiKupiec.textContent = `p = ${(data.kupiec_p_value || 0.85).toFixed(4)}`;
-        if (kpiBreaches) kpiBreaches.textContent = `${data.var_violations} / ${data.total_observations} ${currentLang === 'id' ? 'Pelanggaran' : 'Breaches'} (${data.observed_violation_rate}%)`;
+        if (kpiBreaches) kpiBreaches.textContent = `${data.var_violations} / ${data.total_observations} Breaches (${data.observed_violation_rate}%)`;
 
-        if (tblViolations) tblViolations.textContent = `${data.var_violations} / ${data.total_observations}`;
-        if (tblLrPof) tblLrPof.textContent = (data.kupiec_pof_stat || 0).toFixed(4);
+        const obsText = `${data.var_violations} / ${data.total_observations}`;
+        if (tblViolations) tblViolations.textContent = obsText;
+        const tblViolationsMobile = document.getElementById('tblViolationsMobile');
+        if (tblViolationsMobile) tblViolationsMobile.textContent = obsText;
+
+        const lrStatText = (data.kupiec_pof_stat || 0).toFixed(4);
+        if (tblLrPof) tblLrPof.textContent = lrStatText;
+        const tblLrPofMobile = document.getElementById('tblLrPofMobile');
+        if (tblLrPofMobile) tblLrPofMobile.textContent = lrStatText;
 
         // Basel Zone Badge
         const zone = data.basel_zone || 'GREEN';
-        let zoneLabel = `BASEL III ${zone} ZONE`;
-        if (currentLang === 'id') {
-            const idZone = zone === 'GREEN' ? 'HIJAU' : (zone === 'YELLOW' ? 'KUNING' : 'MERAH');
-            zoneLabel = `BASEL III ZONA ${idZone}`;
-        }
+        const zoneLabel = `BASEL III ${zone} ZONE`;
+        
         if (baselBadgeText) baselBadgeText.textContent = zoneLabel;
         if (baselBadge) baselBadge.className = 'status-badge ' + (zone === 'GREEN' ? 'green' : (zone === 'YELLOW' ? 'amber' : 'red'));
         if (kpiBaselStatusTag) {
-            kpiBaselStatusTag.textContent = currentLang === 'id' ? `Zona ${zone === 'GREEN' ? 'Hijau' : zone}` : `${zone} Zone`;
+            kpiBaselStatusTag.textContent = `${zone === 'GREEN' ? 'Green' : zone} Zone`;
             kpiBaselStatusTag.className = 'metric-tag ' + (zone === 'GREEN' ? 'success' : (zone === 'YELLOW' ? 'info' : 'danger'));
         }
 
+        const tblViolationTagMobile = document.getElementById('tblViolationTagMobile');
         if (tblViolationTag) {
             if (data.kupiec_p_value > 0.05) {
-                tblViolationTag.textContent = currentLang === 'id' ? "LOLOS" : "PASS";
+                tblViolationTag.textContent = "PASS";
                 tblViolationTag.className = "table-tag pass";
+                if (tblViolationTagMobile) {
+                    tblViolationTagMobile.textContent = "PASS";
+                    tblViolationTagMobile.className = "table-tag pass";
+                }
             } else {
-                tblViolationTag.textContent = currentLang === 'id' ? "GAGAL" : "FAIL";
+                tblViolationTag.textContent = "FAIL";
                 tblViolationTag.className = "table-tag danger";
+                if (tblViolationTagMobile) {
+                    tblViolationTagMobile.textContent = "FAIL";
+                    tblViolationTagMobile.className = "table-tag danger";
+                }
             }
         }
     }
 
     function updateComplianceView(data) {
         if (!data) return;
-        if (compViolations95) compViolations95.textContent = `${data.var_violations} / ${data.total_observations}`;
-        if (compRate95) compRate95.textContent = `${data.observed_violation_rate}%`;
-        if (compLr95) compLr95.textContent = (data.kupiec_pof_stat || 0).toFixed(4);
-        if (compPval95) compPval95.textContent = (data.kupiec_p_value || 0.85).toFixed(4);
 
-        const zone = data.basel_zone || 'GREEN';
-        if (compZoneTag95) {
-            compZoneTag95.textContent = currentLang === 'id' ? `ZONA ${zone === 'GREEN' ? 'HIJAU' : zone}` : `${zone} ZONE`;
-            compZoneTag95.className = 'table-tag ' + (zone === 'GREEN' ? 'pass' : (zone === 'YELLOW' ? 'info' : 'danger'));
+        // Dynamic Multi-Quantile Compliance Matrix (Desktop & Mobile)
+        const matrixBody = document.getElementById('complianceMatrixBody');
+        const mobileCompCards = document.getElementById('mobileComplianceCards');
+
+        if (data.compliance_matrix && data.compliance_matrix.length > 0) {
+            if (matrixBody) {
+                matrixBody.innerHTML = data.compliance_matrix.map(row => {
+                    const z = row.basel_zone || 'GREEN';
+                    const tagClass = z === 'GREEN' ? 'pass' : (z === 'YELLOW' ? 'info' : 'danger');
+                    const zLabel = `${z} ZONE`;
+                    return `
+                        <tr>
+                            <td class="mono">${row.confidence_level_label}</td>
+                            <td class="mono">${row.expected_violation_rate_pct.toFixed(2)}%</td>
+                            <td class="mono">${row.observed_violations}</td>
+                            <td class="mono">${row.observed_violation_rate_pct.toFixed(2)}%</td>
+                            <td class="mono">${row.kupiec_lr_stat.toFixed(4)}</td>
+                            <td class="mono">${row.p_value.toFixed(4)}</td>
+                            <td><span class="table-tag ${tagClass}">${zLabel}</span></td>
+                        </tr>
+                    `;
+                }).join('');
+            }
+
+            if (mobileCompCards) {
+                mobileCompCards.innerHTML = data.compliance_matrix.map(row => {
+                    const z = row.basel_zone || 'GREEN';
+                    const tagClass = z === 'GREEN' ? 'pass' : (z === 'YELLOW' ? 'info' : 'danger');
+                    const zLabel = `${z} ZONE`;
+                    return `
+                        <div class="mobile-data-card">
+                            <div class="card-main-info">
+                                <div class="card-header-row">
+                                    <span class="card-item-title">${row.confidence_level_label}</span>
+                                    <div class="card-header-badges">
+                                        <span class="badge-sub">${row.observed_violation_rate_pct.toFixed(2)}% OBS</span>
+                                        <span class="table-tag ${tagClass}">${zLabel}</span>
+                                    </div>
+                                </div>
+                                <div class="card-sub-info">
+                                    <span>EXP: ${row.expected_violation_rate_pct.toFixed(2)}%</span>
+                                    <span class="info-sep">|</span>
+                                    <span>VIOLATIONS: ${row.observed_violations}</span>
+                                    <span class="info-sep">|</span>
+                                    <span>LR: ${row.kupiec_lr_stat.toFixed(4)}</span>
+                                </div>
+                            </div>
+                            <button class="expand-rincian-btn" onclick="toggleCardDetail(this)">
+                                <span class="rincian-label">View Details</span>
+                                <i class="fa-solid fa-chevron-down rincian-chevron"></i>
+                            </button>
+                            <div class="card-detail-box">
+                                <div class="detail-grid-2col">
+                                    <div class="detail-pair">
+                                        <span class="dp-label">Confidence Level:</span>
+                                        <span class="dp-value mono">${row.confidence_level_label}</span>
+                                    </div>
+                                    <div class="detail-pair">
+                                        <span class="dp-label">Expected Violation Rate:</span>
+                                        <span class="dp-value mono">${row.expected_violation_rate_pct.toFixed(2)}%</span>
+                                    </div>
+                                    <div class="detail-pair">
+                                        <span class="dp-label">Observed Violations:</span>
+                                        <span class="dp-value mono">${row.observed_violations} (${row.observed_violation_rate_pct.toFixed(2)}%)</span>
+                                    </div>
+                                    <div class="detail-pair">
+                                        <span class="dp-label">Kupiec LR Stat:</span>
+                                        <span class="dp-value mono">${row.kupiec_lr_stat.toFixed(4)} (p=${row.p_value.toFixed(4)})</span>
+                                    </div>
+                                    <div class="detail-pair" style="grid-column: 1 / -1;">
+                                        <span class="dp-label">Basel Traffic Zone:</span>
+                                        <span class="dp-value"><span class="table-tag ${tagClass}">${zLabel}</span></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
         }
 
-        const pVal = data.portfolio_value || 1000000;
-        const lehmanLoss = pVal * 0.10 * 1.25;
-        const covidLoss = pVal * 0.125 * 1.25;
-        const cryptoLoss = pVal * 0.20 * 1.25;
+        // Dynamic Model-Based Stress Scenarios (Desktop & Mobile)
+        const stressBody = document.getElementById('stressScenariosBody');
+        const mobileStressCards = document.getElementById('mobileStressCards');
 
-        if (stressLossLehman) stressLossLehman.textContent = '-$' + Math.round(lehmanLoss).toLocaleString('en-US');
-        if (stressLossCovid) stressLossCovid.textContent = '-$' + Math.round(covidLoss).toLocaleString('en-US');
-        if (stressLossCrypto) stressLossCrypto.textContent = '-$' + Math.round(cryptoLoss).toLocaleString('en-US');
+        if (data.stress_scenarios && data.stress_scenarios.length > 0) {
+            if (stressBody) {
+                stressBody.innerHTML = data.stress_scenarios.map(sc => {
+                    const lossFormatted = '-$' + Math.round(sc.stressed_loss_usd).toLocaleString('en-US');
+                    return `
+                        <tr>
+                            <td><strong>${sc.scenario_name}</strong></td>
+                            <td class="mono text-danger">${sc.simulated_return_shock_pct.toFixed(2)}%</td>
+                            <td class="mono">${sc.stressed_volatility_pct.toFixed(2)}%</td>
+                            <td class="mono text-danger">${lossFormatted}</td>
+                            <td><span class="table-tag danger">${sc.capital_impact}</span></td>
+                        </tr>
+                    `;
+                }).join('');
+            }
+
+            if (mobileStressCards) {
+                mobileStressCards.innerHTML = data.stress_scenarios.map(sc => {
+                    const lossFormatted = '-$' + Math.round(sc.stressed_loss_usd).toLocaleString('en-US');
+                    return `
+                        <div class="mobile-data-card">
+                            <div class="card-main-info">
+                                <div class="card-header-row">
+                                    <span class="card-item-title">${sc.scenario_name}</span>
+                                    <div class="card-header-badges">
+                                        <span class="badge-sub">${sc.simulated_return_shock_pct.toFixed(2)}% SHOCK</span>
+                                        <span class="table-tag danger">${sc.capital_impact}</span>
+                                    </div>
+                                </div>
+                                <div class="card-sub-info">
+                                    <span>STRESSED VOL: ${sc.stressed_volatility_pct.toFixed(2)}%</span>
+                                    <span class="info-sep">|</span>
+                                    <span>EST LOSS: <strong class="text-danger">${lossFormatted}</strong></span>
+                                </div>
+                            </div>
+                            <button class="expand-rincian-btn" onclick="toggleCardDetail(this)">
+                                <span class="rincian-label">View Details</span>
+                                <i class="fa-solid fa-chevron-down rincian-chevron"></i>
+                            </button>
+                            <div class="card-detail-box">
+                                <div class="detail-grid-2col">
+                                    <div class="detail-pair">
+                                        <span class="dp-label">Scenario Name:</span>
+                                        <span class="dp-value">${sc.scenario_name}</span>
+                                    </div>
+                                    <div class="detail-pair">
+                                        <span class="dp-label">Return Shock:</span>
+                                        <span class="dp-value mono text-danger">${sc.simulated_return_shock_pct.toFixed(2)}%</span>
+                                    </div>
+                                    <div class="detail-pair">
+                                        <span class="dp-label">Stressed Volatility:</span>
+                                        <span class="dp-value mono">${sc.stressed_volatility_pct.toFixed(2)}%</span>
+                                    </div>
+                                    <div class="detail-pair">
+                                        <span class="dp-label">Stressed Loss ($):</span>
+                                        <span class="dp-value mono text-danger">${lossFormatted}</span>
+                                    </div>
+                                    <div class="detail-pair" style="grid-column: 1 / -1;">
+                                        <span class="dp-label">Capital Reserve Impact:</span>
+                                        <span class="dp-value"><span class="table-tag danger">${sc.capital_impact}</span></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+        }
     }
+
+    window.toggleCardDetail = function(btn) {
+        const card = btn.closest('.mobile-data-card');
+        if (!card) return;
+        card.classList.toggle('expanded');
+        const label = btn.querySelector('.rincian-label');
+        if (label) {
+            label.textContent = card.classList.contains('expanded') ? 'Hide Details' : 'View Details';
+        }
+    };
 
     function switchTab(tabName) {
         activeTab = tabName;
@@ -542,15 +496,16 @@ document.addEventListener('DOMContentLoaded', () => {
         if (tabVaR) tabVaR.classList.toggle('active', tabName === 'var');
         if (tabReturns) tabReturns.classList.toggle('active', tabName === 'returns');
 
-        const dict = translations[currentLang] || translations.en;
+
+
         const ticker = tickerSelect ? tickerSelect.value : 'AAPL';
         if (chartMainTitle) {
             if (tabName === 'forecast') {
-                chartMainTitle.textContent = dict.title_forecast;
+                chartMainTitle.textContent = "Volatility Forecast Tracking";
             } else if (tabName === 'var') {
-                chartMainTitle.textContent = dict.title_var;
+                chartMainTitle.textContent = "Filtered Historical Simulation (FHS) VaR Regulatory Backtest";
             } else {
-                chartMainTitle.textContent = `${ticker} ${dict.title_returns}`;
+                chartMainTitle.textContent = `${ticker} Daily Log-Return Dispersion`;
             }
         }
 
@@ -568,7 +523,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const dates = data.time_series.dates;
-        const dict = translations[currentLang] || translations.en;
 
         if (tab === 'forecast') {
             currentChart = new Chart(ctx, {
@@ -577,27 +531,52 @@ document.addEventListener('DOMContentLoaded', () => {
                     labels: dates,
                     datasets: [
                         {
-                            label: currentLang === 'id' ? 'Volatilitas Terprediksi (LightGBM + EVT)' : 'Predicted Volatility (LightGBM + EVT)',
-                            data: data.time_series.predicted_volatility,
-                            borderColor: '#2563EB',
+                            label: 'Realized Volatility (30-Day)',
+                            data: data.time_series.realized_volatility,
+                            borderColor: '#8B5CF6',
+                            backgroundColor: '#8B5CF6',
                             borderWidth: 2,
                             pointRadius: 0,
+                            pointHoverRadius: 6,
+                            pointHoverBackgroundColor: '#8B5CF6',
+                            pointHoverBorderColor: '#FFFFFF',
+                            pointHoverBorderWidth: 2.5,
                             fill: false,
                             tension: 0.1
                         },
                         {
-                            label: `${currentLang === 'id' ? 'Batas Ambang EVT' : 'EVT Cap Boundary'} (${(data.evt_cap_threshold * 100).toFixed(2)}%)`,
+                            label: 'LightGBM Predicted Volatility',
+                            data: data.time_series.predicted_volatility,
+                            borderColor: '#C4B5FD',
+                            backgroundColor: '#C4B5FD',
+                            borderWidth: 2,
+                            pointRadius: 0,
+                            pointHoverRadius: 6,
+                            pointHoverBackgroundColor: '#C4B5FD',
+                            pointHoverBorderColor: '#FFFFFF',
+                            pointHoverBorderWidth: 2.5,
+                            fill: false,
+                            tension: 0.1
+                        },
+                        {
+                            label: `EVT Cap Boundary (${(data.evt_cap_threshold * 100).toFixed(2)}%)`,
                             data: Array(dates.length).fill(data.evt_cap_threshold),
-                            borderColor: '#94A3B8',
+                            borderColor: '#F59E0B',
+                            backgroundColor: '#F59E0B',
                             borderWidth: 1.5,
                             borderDash: [4, 4],
                             pointRadius: 0,
+                            pointHoverRadius: 5,
+                            pointHoverBackgroundColor: '#F59E0B',
+                            pointHoverBorderColor: '#FFFFFF',
+                            pointHoverBorderWidth: 2,
                             fill: false
                         }
                     ]
                 },
                 options: getCommonChartOptions()
             });
+            renderCustomLegend(currentChart.data.datasets);
         } else if (tab === 'var') {
             const breachData = data.time_series.returns.map((ret, idx) => {
                 return data.time_series.breaches[idx] ? ret : null;
@@ -609,34 +588,48 @@ document.addEventListener('DOMContentLoaded', () => {
                     labels: dates,
                     datasets: [
                         {
-                            label: currentLang === 'id' ? 'Return Harian (r_t)' : 'Daily Log Return (r_t)',
+                            label: 'Daily Log Return (r_t)',
                             data: data.time_series.returns,
-                            borderColor: '#0284C7',
+                            borderColor: '#6366F1',
+                            backgroundColor: '#6366F1',
                             borderWidth: 1,
                             pointRadius: 0,
+                            pointHoverRadius: 6,
+                            pointHoverBackgroundColor: '#6366F1',
+                            pointHoverBorderColor: '#FFFFFF',
+                            pointHoverBorderWidth: 2.5,
                             fill: false
                         },
                         {
-                            label: `FHS ${(data.confidence_level * 100).toFixed(0)}% ${currentLang === 'id' ? 'Batas VaR' : 'VaR Boundary'}`,
+                            label: `FHS ${(data.confidence_level * 100).toFixed(0)}% VaR Boundary`,
                             data: data.time_series.var_limits,
-                            borderColor: '#DC2626',
+                            borderColor: '#EF4444',
+                            backgroundColor: '#EF4444',
                             borderWidth: 1.5,
                             pointRadius: 0,
+                            pointHoverRadius: 5,
+                            pointHoverBackgroundColor: '#EF4444',
+                            pointHoverBorderColor: '#FFFFFF',
+                            pointHoverBorderWidth: 2,
                             fill: false
                         },
                         {
-                            label: currentLang === 'id' ? 'Pelanggaran VaR (Breach)' : 'VaR Breach (Violation)',
+                            label: 'VaR Breach (Violation)',
                             data: breachData,
-                            backgroundColor: '#DC2626',
-                            borderColor: '#DC2626',
-                            pointRadius: 4,
-                            pointHoverRadius: 6,
+                            backgroundColor: '#F87171',
+                            borderColor: '#EF4444',
+                            pointRadius: 5,
+                            pointHoverRadius: 8,
+                            pointHoverBackgroundColor: '#EF4444',
+                            pointHoverBorderColor: '#FFFFFF',
+                            pointHoverBorderWidth: 3,
                             showLine: false
                         }
                     ]
                 },
                 options: getCommonChartOptions()
             });
+            renderCustomLegend(currentChart.data.datasets);
         } else if (tab === 'returns') {
             currentChart = new Chart(ctx, {
                 type: 'line',
@@ -644,39 +637,93 @@ document.addEventListener('DOMContentLoaded', () => {
                     labels: dates,
                     datasets: [
                         {
-                            label: `${data.ticker} ${currentLang === 'id' ? 'Return Harian' : 'Daily Return'}`,
+                            label: `${data.ticker} Daily Return`,
                             data: data.time_series.returns,
-                            borderColor: '#1E40AF',
+                            borderColor: '#8B5CF6',
+                            backgroundColor: '#8B5CF6',
                             borderWidth: 1.2,
                             pointRadius: 0,
+                            pointHoverRadius: 6,
+                            pointHoverBackgroundColor: '#8B5CF6',
+                            pointHoverBorderColor: '#FFFFFF',
+                            pointHoverBorderWidth: 2.5,
                             fill: {
                                 target: 'origin',
-                                above: 'rgba(30, 64, 175, 0.06)',
-                                below: 'rgba(220, 38, 38, 0.06)'
+                                above: 'rgba(139, 92, 246, 0.15)',
+                                below: 'rgba(239, 68, 68, 0.15)'
                             }
                         }
                     ]
                 },
                 options: getCommonChartOptions()
             });
+            renderCustomLegend(currentChart.data.datasets);
         }
+    }
+
+    function renderCustomLegend(datasets) {
+        const legendEl = document.getElementById('chartLegend');
+        if (!legendEl) return;
+        
+        let html = '';
+        datasets.forEach(ds => {
+            if (ds.label) {
+                const color = ds.borderColor || ds.backgroundColor;
+                const isPointOnly = ds.showLine === false || (ds.pointRadius && ds.pointRadius > 0 && ds.borderWidth === undefined);
+                const isDash = ds.borderDash && ds.borderDash.length > 0;
+                
+                let iconHtml = '';
+                if (isPointOnly) {
+                    // Titik / Point Icon
+                    iconHtml = `<span class="legend-icon point-icon" style="background-color: ${color};"></span>`;
+                } else if (isDash) {
+                    // Garis Putus-putus / Dashed Line Icon
+                    iconHtml = `<span class="legend-icon dashed-line-icon" style="border-top-color: ${color};"></span>`;
+                } else {
+                    // Garis Solid / Solid Line Icon
+                    iconHtml = `<span class="legend-icon solid-line-icon" style="background-color: ${color};"></span>`;
+                }
+                
+                html += `
+                    <div class="legend-item">
+                        ${iconHtml}
+                        <span class="legend-label">${ds.label}</span>
+                    </div>
+                `;
+            }
+        });
+        legendEl.innerHTML = html;
     }
 
     function renderImportanceChart() {
         const canvasEl = document.getElementById('importanceChart');
         if (!canvasEl) return;
         const ctx = canvasEl.getContext('2d');
-        const features = ['vol_30d', 'vol_14d', 'vol_7d', 'macd', 'rsi_14', 'return_lag1', 'real_sent_vol_inter', 'real_sent_compound', 'real_neg_ratio'];
-        const gains = [4850.2, 3420.5, 2150.8, 1280.4, 940.1, 620.5, 450.2, 310.8, 180.5];
+        
+        let features = ['vol_30d', 'vol_14d', 'vol_7d', 'macd', 'rsi_14', 'return_lag1', 'real_sent_vol_inter', 'real_sent_compound', 'real_neg_ratio'];
+        let gains = [4850.2, 3420.5, 2150.8, 1280.4, 940.1, 620.5, 450.2, 310.8, 180.5];
+
+        if (cachedRiskData && cachedRiskData.feature_importance) {
+            features = cachedRiskData.feature_importance.features || features;
+            gains = cachedRiskData.feature_importance.gains || gains;
+        }
+
+        if (importanceChart) {
+            importanceChart.destroy();
+        }
+
+        const isDesktop = window.innerWidth >= 1025;
+        const fontSizeXs = isDesktop ? 10 : 9.5;
+        const fontSizeSm = isDesktop ? 11 : 10.5;
 
         importanceChart = new Chart(ctx, {
             type: 'bar',
             data: {
                 labels: features,
                 datasets: [{
-                    label: currentLang === 'id' ? 'Skor Kepentingan Gain' : 'Gain Importance Score',
+                    label: 'Gain Importance Score',
                     data: gains,
-                    backgroundColor: '#2563EB',
+                    backgroundColor: '#5347B9',
                     borderRadius: 4
                 }]
             },
@@ -690,11 +737,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 scales: {
                     x: {
                         grid: { color: '#F1F5F9' },
-                        ticks: { color: '#64748B', font: { family: 'JetBrains Mono', size: 10 } }
+                        ticks: { color: '#64748B', font: { family: 'JetBrains Mono', size: fontSizeXs } }
                     },
                     y: {
                         grid: { display: false },
-                        ticks: { color: '#0F172A', font: { family: 'JetBrains Mono', size: 11, weight: '600' } }
+                        ticks: { color: '#0F172A', font: { family: 'JetBrains Mono', size: fontSizeSm, weight: '600' } }
                     }
                 }
             }
@@ -702,32 +749,60 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function getCommonChartOptions() {
+        const isDesktop = window.innerWidth >= 1025;
+        const fontSizeXs = isDesktop ? 10 : 9.5;
+        const fontSizeSm = isDesktop ? 11 : 10.5;
+        const fontSizeBase = isDesktop ? 12 : 11.5;
         return {
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
-                legend: {
-                    position: 'top',
-                    align: 'end',
-                    labels: {
-                        color: '#475569',
-                        font: { family: 'Inter', size: 11, weight: '600' },
-                        usePointStyle: true,
-                        boxWidth: 8
-                    }
-                },
+                legend: { display: false },
                 tooltip: {
                     mode: 'index',
                     intersect: false,
-                    backgroundColor: '#FFFFFF',
-                    titleColor: '#0F172A',
-                    bodyColor: '#334155',
-                    borderColor: '#E2E8F0',
+                    backgroundColor: 'rgba(15, 23, 42, 0.92)',
+                    backdropFilter: 'blur(12px)',
+                    titleColor: '#F8FAFC',
+                    bodyColor: '#E2E8F0',
+                    borderColor: 'rgba(255, 255, 255, 0.15)',
                     borderWidth: 1,
-                    titleFont: { family: 'Plus Jakarta Sans', size: 12, weight: '700' },
-                    bodyFont: { family: 'JetBrains Mono', size: 11 },
-                    padding: 10,
-                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+                    cornerRadius: 10,
+                    padding: 14,
+                    displayColors: true,
+                    boxWidth: 8,
+                    boxHeight: 8,
+                    boxPadding: 6,
+                    usePointStyle: true,
+                    titleFont: { family: 'Plus Jakarta Sans', size: fontSizeBase, weight: '700' },
+                    bodyFont: { family: 'JetBrains Mono', size: fontSizeSm, weight: '500' },
+                    callbacks: {
+                        title: function(tooltipItems) {
+                            if (!tooltipItems || !tooltipItems.length) return '';
+                            const rawLabel = tooltipItems[0].label;
+                            if (!rawLabel) return '';
+                            const parts = rawLabel.split('-');
+                            if (parts.length === 3) {
+                                const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+                                const mIdx = parseInt(parts[1], 10) - 1;
+                                return `📅 Date: ${parts[2]} ${months[mIdx] || parts[1]} ${parts[0]}`;
+                            }
+                            return rawLabel;
+                        },
+                        label: function(context) {
+                            let label = context.dataset.label || '';
+                            if (label) label += ': ';
+                            if (context.parsed.y !== null && context.parsed.y !== undefined) {
+                                const val = context.parsed.y;
+                                if (Math.abs(val) < 1) {
+                                    label += (val * 100).toFixed(2) + '%';
+                                } else {
+                                    label += val.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                                }
+                            }
+                            return label;
+                        }
+                    }
                 }
             },
             scales: {
@@ -735,7 +810,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     grid: { color: '#F1F5F9' },
                     ticks: {
                         color: '#64748B',
-                        font: { family: 'Inter', size: 11, weight: '500' },
+                        font: { family: 'Inter', size: fontSizeSm, weight: '500' },
                         maxTicksLimit: 10,
                         maxRotation: 0,
                         minRotation: 0,
@@ -756,7 +831,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     grid: { color: '#F1F5F9' },
                     ticks: {
                         color: '#64748B',
-                        font: { family: 'JetBrains Mono', size: 10 },
+                        font: { family: 'JetBrains Mono', size: fontSizeXs },
                         callback: function(val) {
                             if (activeTab === 'forecast') {
                                 return (val * 100).toFixed(0) + '%';
@@ -774,14 +849,13 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderNews(newsList) {
         if (!newsGrid) return;
         newsGrid.innerHTML = '';
-        const dict = translations[currentLang] || translations.en;
         if (!newsList || newsList.length === 0) {
-            newsGrid.innerHTML = `<div class="news-item"><div class="news-item-title">${currentLang === 'id' ? 'Tidak ada berita utama yang ditemukan.' : 'No recent headlines retrieved for asset.'}</div></div>`;
-            if (newsCountBadge) newsCountBadge.textContent = currentLang === 'id' ? '0 Berita' : '0 Headlines';
+            newsGrid.innerHTML = `<div class="news-item"><div class="news-item-title">No headlines found for this asset.</div></div>`;
+            if (newsCountBadge) newsCountBadge.textContent = '0 Headlines';
             return;
         }
 
-        if (newsCountBadge) newsCountBadge.textContent = `${newsList.length} ${currentLang === 'id' ? 'Berita' : 'Headlines'}`;
+        if (newsCountBadge) newsCountBadge.textContent = `${newsList.length} Headlines`;
 
         newsList.forEach(item => {
             const card = document.createElement('div');
@@ -791,10 +865,10 @@ document.addEventListener('DOMContentLoaded', () => {
             let sentLabel = 'NEUTRAL';
             if (item.compound > 0.05) {
                 sentClass = 'positive';
-                sentLabel = `${currentLang === 'id' ? 'POSITIF' : 'POSITIVE'} (+${item.compound.toFixed(2)})`;
+                sentLabel = `POSITIVE (+${item.compound.toFixed(2)})`;
             } else if (item.compound < -0.05) {
                 sentClass = 'negative';
-                sentLabel = `${currentLang === 'id' ? 'NEGATIF' : 'NEGATIVE'} (${item.compound.toFixed(2)})`;
+                sentLabel = `NEGATIVE (${item.compound.toFixed(2)})`;
             }
 
             card.innerHTML = `
@@ -814,9 +888,219 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    function showLoader(show) {
+    function showLoader(show, text, subtext) {
         if (!loaderOverlay) return;
-        if (show) loaderOverlay.classList.add('active');
-        else loaderOverlay.classList.remove('active');
+        const loaderText = document.getElementById('loaderText');
+        const loaderSubtext = document.getElementById('loaderSubtext');
+        
+        if (text && loaderText) loaderText.textContent = text;
+        if (subtext && loaderSubtext) loaderSubtext.textContent = subtext;
+        
+        if (show) {
+            loaderOverlay.classList.add('active');
+        } else {
+            loaderOverlay.classList.remove('active');
+        }
+    }
+
+    // PWA Service Worker Registration & Installation Handler
+    let deferredPwaPrompt = null;
+    const pwaInstallBanner = document.getElementById('pwaInstallBanner');
+    const pwaInstallBtn = document.getElementById('pwaInstallBtn');
+    const pwaDismissBtn = document.getElementById('pwaDismissBtn');
+    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+    const sidebarCloseBtn = document.getElementById('sidebarCloseBtn');
+    const sidebarElement = document.getElementById('appSidebar') || document.querySelector('.sidebar');
+    const sidebarBackdrop = document.getElementById('sidebarBackdrop');
+
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('/sw.js')
+                .then(reg => console.log('[ServiceWorker] Registered with scope:', reg.scope))
+                .catch(err => console.warn('[ServiceWorker] Registration failed:', err));
+        });
+    }
+
+    function showInstallBanner() {
+        if (pwaInstallBanner && !localStorage.getItem('pwa_install_dismissed')) {
+            setTimeout(() => {
+                pwaInstallBanner.classList.add('visible');
+            }, 3000);
+        }
+    }
+
+    function hideInstallBanner() {
+        if (pwaInstallBanner) {
+            pwaInstallBanner.classList.remove('visible');
+        }
+    }
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPwaPrompt = e;
+        showInstallBanner();
+    });
+
+    if (pwaInstallBtn) {
+        pwaInstallBtn.addEventListener('click', async () => {
+            if (!deferredPwaPrompt) return;
+            deferredPwaPrompt.prompt();
+            const { outcome } = await deferredPwaPrompt.userChoice;
+            console.log('[PWA] User choice outcome:', outcome);
+            deferredPwaPrompt = null;
+            hideInstallBanner();
+            if (outcome === 'dismissed') {
+                localStorage.setItem('pwa_install_dismissed', 'true');
+            }
+        });
+    }
+
+    if (pwaDismissBtn) {
+        pwaDismissBtn.addEventListener('click', () => {
+            hideInstallBanner();
+            localStorage.setItem('pwa_install_dismissed', 'true');
+        });
+    }
+
+    window.addEventListener('appinstalled', () => {
+        console.log('[PWA] Application successfully installed as standalone PWA');
+        hideInstallBanner();
+        localStorage.setItem('pwa_install_dismissed', 'true');
+    });
+
+    // Mobile Android Drawer Navigation Handlers
+
+    function toggleDrawer(open) {
+        if (!sidebarElement) return;
+        const isOpen = open !== undefined ? open : !sidebarElement.classList.contains('mobile-open');
+        sidebarElement.classList.toggle('mobile-open', isOpen);
+        if (sidebarBackdrop) sidebarBackdrop.classList.toggle('active', isOpen);
+    }
+
+    if (mobileMenuBtn) mobileMenuBtn.addEventListener('click', () => toggleDrawer(true));
+    if (sidebarCloseBtn) sidebarCloseBtn.addEventListener('click', () => toggleDrawer(false));
+    if (sidebarBackdrop) sidebarBackdrop.addEventListener('click', () => toggleDrawer(false));
+
+    // Automatically close drawer when clicking primary action button
+    if (btnScan) {
+        btnScan.addEventListener('click', () => {
+            if (window.innerWidth <= 1024) toggleDrawer(false);
+        });
+    }
+
+    // Touch swipe to close drawer
+    let touchStartX = 0;
+    if (sidebarElement) {
+        sidebarElement.addEventListener('touchstart', (e) => {
+            touchStartX = e.touches[0].clientX;
+        }, { passive: true });
+        sidebarElement.addEventListener('touchend', (e) => {
+            const touchEndX = e.changedTouches[0].clientX;
+            if (touchStartX - touchEndX > 80) {
+                toggleDrawer(false);
+            }
+        }, { passive: true });
+    }
+
+    // Material Design 3 Info Modal Dialog logic
+    const infoModal = document.getElementById('infoModal');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalBodyText = document.getElementById('modalBodyText');
+    const modalDynamicInsight = document.getElementById('modalDynamicInsight');
+    const modalIcon = document.getElementById('modalIcon');
+    const modalCloseBtn = document.getElementById('modalCloseBtn');
+    const modalOkBtn = document.getElementById('modalOkBtn');
+
+    // Tooltip click handlers
+    document.querySelectorAll('.info-tooltip').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const metric = btn.getAttribute('data-metric');
+            if (metric) openMetricModal(metric);
+        });
+    });
+
+    function openMetricModal(metric) {
+        if (!cachedRiskData) return;
+        const data = cachedRiskData;
+        const volPct = (data.predicted_volatility_annualized * 100).toFixed(2);
+        const varUsd = '$' + (data.daily_var_usd || 0).toLocaleString('en-US');
+        const esUsd = '$' + (data.daily_es_usd || 0).toLocaleString('en-US');
+        const confPct = ((data.confidence_level || 0.95) * 100).toFixed(0);
+
+        let title = '';
+        let bodyText = '';
+        let insight = '';
+        let iconClass = 'fa-circle-info';
+        let borderClass = '';
+        let iconColorClass = '';
+
+        if (metric === 'volatility') {
+            title = 'Predicted Volatility (5-Day)';
+            bodyText = 'Machine predicted price volatility over a 5-day horizon. Higher percentage reflects wider price swings and greater market uncertainty.';
+            insight = `Asset ${data.ticker} is projected to experience ${volPct}% annual price volatility. This indicates ${volPct > 35 ? 'high market volatility' : 'moderate/stable price action'}.`;
+            iconClass = 'fa-arrow-trend-up';
+            borderClass = '';
+            iconColorClass = 'text-accent';
+        } else if (metric === 'var') {
+            title = 'Value-at-Risk (1-Day VaR)';
+            bodyText = `Estimated maximum daily loss under normal market conditions at ${confPct}% confidence. This defines the threshold that loss is not expected to exceed.`;
+            insight = `With $${(data.portfolio_value || 1000000).toLocaleString('en-US')} capital, there is ${confPct}% certainty that your 1-day loss won't exceed ${varUsd}. In extreme crisis events (worst 5%), expected tail loss averages ${esUsd}.`;
+            iconClass = 'fa-shield-halved';
+            borderClass = 'alert-border';
+            iconColorClass = 'text-danger';
+        } else if (metric === 'es') {
+            title = 'Expected Shortfall (ES)';
+            bodyText = `Average expected loss in extreme tail crisis scenarios beyond the ${confPct}% VaR threshold (the average of the worst 5% of returns). Unlike VaR, ES is a coherent risk measure that accounts for tail severity.`;
+            insight = `If market shocks exceed your VaR limit (${varUsd}), your expected average loss in those tail events is ${esUsd} (${data.daily_es_pct}% of your portfolio).`;
+            iconClass = 'fa-triangle-exclamation';
+            borderClass = 'alert-border';
+            iconColorClass = 'text-danger';
+        } else if (metric === 'basel') {
+            title = 'Model Reliability (Basel III)';
+            bodyText = 'International banking regulatory backtest verifying VaR model accuracy. A p-value greater than 0.05 indicates model validity under Basel III standards.';
+            const zone = data.basel_zone || 'GREEN';
+            insight = `The forecast model is certified in the Basel III ${zone} ZONE (p = ${(data.kupiec_p_value || 0.85).toFixed(4)} > 0.05). This confirms high predictive reliability under global banking standards.`;
+            iconClass = 'fa-building-columns';
+            borderClass = zone === 'GREEN' ? 'success-border' : (zone === 'YELLOW' ? 'warning-border' : 'alert-border');
+            iconColorClass = zone === 'GREEN' ? 'text-success' : (zone === 'YELLOW' ? 'text-warn' : 'text-danger');
+        }
+
+        if (modalTitle) modalTitle.textContent = title;
+        if (modalBodyText) modalBodyText.textContent = bodyText;
+        if (modalDynamicInsight) modalDynamicInsight.textContent = insight;
+        
+        if (modalIcon) {
+            modalIcon.className = `fa-solid ${iconClass} modal-title-icon ${iconColorClass}`;
+        }
+        
+        const insightBox = document.querySelector('.modal-insight-box');
+        if (insightBox) {
+            insightBox.className = `modal-insight-box ${borderClass}`;
+        }
+
+        if (infoModal) {
+            infoModal.style.display = 'flex';
+            infoModal.offsetHeight; // force reflow
+            infoModal.classList.add('active');
+        }
+    }
+
+    function closeMetricModal() {
+        if (infoModal) {
+            infoModal.classList.remove('active');
+            setTimeout(() => {
+                infoModal.style.display = 'none';
+            }, 250);
+        }
+    }
+
+    if (modalCloseBtn) modalCloseBtn.addEventListener('click', closeMetricModal);
+    if (modalOkBtn) modalOkBtn.addEventListener('click', closeMetricModal);
+    
+    if (infoModal) {
+        infoModal.addEventListener('click', (e) => {
+            if (e.target === infoModal) closeMetricModal();
+        });
     }
 });

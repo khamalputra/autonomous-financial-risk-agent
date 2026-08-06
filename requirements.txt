@@ -1,0 +1,14 @@
+fastapi>=0.100.0
+uvicorn[standard]>=0.22.0
+pydantic>=2.0.0
+pydantic-settings>=2.0.0
+numpy>=1.24.0
+pandas>=2.0.0
+scipy>=1.10.0
+lightgbm>=3.3.5
+joblib>=1.2.0
+yfinance>=0.2.28
+nltk>=3.8.1
+fpdf2>=2.7.5
+jinja2>=3.1.2
+python-multipart>=0.0.6

@@ -39,6 +39,10 @@ def test_analyze_risk_endpoint():
     assert "daily_es_usd" in data
     assert "kupiec_p_value" in data
     assert data["basel_zone"] in ["GREEN", "YELLOW", "RED"]
+    assert "compliance_matrix" in data
+    assert len(data["compliance_matrix"]) == 3
+    assert "stress_scenarios" in data
+    assert len(data["stress_scenarios"]) == 3
 
 def test_export_pdf_endpoint():
     payload = {

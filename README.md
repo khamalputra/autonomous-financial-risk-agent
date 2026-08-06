@@ -54,7 +54,9 @@ $$\text{CVaR}_{\alpha}(P) = \mathbb{E}\left[ L \mid L \ge \text{VaR}_{\alpha}(P)
 ---
 
 ## 📄 Documentation
-- [PRD v1.2 (Production Ready)](<PRD - Autonomous Financial & Market Risk Intelligence Agent (v1.2 Updated).md>)
+- [PRD v1.2 (Production Ready)](docs/PRD%20-%20Autonomous%20Financial%20%26%20Market%20Risk%20Intelligence%20Agent%20%28v1.2%20Updated%29.md)
+- [CRISP-DM Executive Audit Report](C:/Users/khamal/.gemini/antigravity/brain/a2e4640e-337b-439f-9dc8-0277686e662c/crisp_dm_executive_risk_report.md)
+- [15-Slide Presentation Deck](C:/Users/khamal/.gemini/antigravity/brain/a2e4640e-337b-439f-9dc8-0277686e662c/presentation_deck.html)
 
 ---
 

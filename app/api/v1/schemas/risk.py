@@ -9,6 +9,7 @@ class RiskAnalysisRequest(BaseModel):
 class TimeSeriesData(BaseModel):
     dates: List[str]
     returns: List[float]
+    realized_volatility: List[float]
     predicted_volatility: List[float]
     var_limits: List[float]
     breaches: List[bool]
@@ -21,6 +22,22 @@ class NewsSentimentItem(BaseModel):
     pos: float
     neg: float
     neu: float
+
+class ComplianceMatrixItem(BaseModel):
+    confidence_level_label: str
+    expected_violation_rate_pct: float
+    observed_violations: str
+    observed_violation_rate_pct: float
+    kupiec_lr_stat: float
+    p_value: float
+    basel_zone: str
+
+class StressScenarioItem(BaseModel):
+    scenario_name: str
+    simulated_return_shock_pct: float
+    stressed_volatility_pct: float
+    stressed_loss_usd: float
+    capital_impact: str
 
 class RiskAnalysisResponse(BaseModel):
     ticker: str
@@ -41,3 +58,6 @@ class RiskAnalysisResponse(BaseModel):
     basel_zone: str
     time_series: TimeSeriesData
     recent_news: List[NewsSentimentItem]
+    compliance_matrix: Optional[List[ComplianceMatrixItem]] = []
+    stress_scenarios: Optional[List[StressScenarioItem]] = []
+

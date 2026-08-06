@@ -40,6 +40,18 @@ async def health_check():
         "version": settings.VERSION
     }
 
+@app.get("/manifest.json")
+async def serve_manifest():
+    """Serves the Web App Manifest for PWA installation."""
+    manifest_path = os.path.join(static_dir, "manifest.json")
+    return FileResponse(manifest_path, media_type="application/manifest+json")
+
+@app.get("/sw.js")
+async def serve_service_worker():
+    """Serves the Service Worker script with root scope."""
+    sw_path = os.path.join(static_dir, "sw.js")
+    return FileResponse(sw_path, media_type="application/javascript", headers={"Cache-Control": "no-cache"})
+
 @app.get("/")
 async def serve_index():
     """Serves the main web dashboard Single Page Application."""
