@@ -65,8 +65,10 @@ The application utilizes a fully decoupled architecture for ultra-low latency in
 ## ⚙️ Mathematical & Quantitative Methodologies
 
 ### 1. Volatility Scaling & LightGBM Regressor
-Daily asset log-returns $r_t = \ln(P_t / P_{t-1})$ are modeled via GARCH(1,1) standardized residuals $e_t = \frac{r_t - \mu_t}{\sigma_t}$. LightGBM predicts conditional volatility using a 9-feature matrix, capped by EVT:
-$$\hat{\sigma}_{t+1} = \min\left( \text{LightGBM}(X_{t-1}), \text{EVT\_Cap} \right)$$
+Daily asset log-returns $r_t = \ln(P_t / P_{t-1})$ are modeled via GARCH(1,1) standardized residuals $e_t = (r_t - \mu_t) / \sigma_t$. LightGBM predicts conditional volatility using a 9-feature matrix, capped by EVT:
+
+$$\hat{\sigma}_{t+1} = \min \left( \text{LightGBM}(X_{t-1}), \text{EVT\_Cap} \right)$$
+
 *Where $\text{EVT\_Cap} = 0.692614434576625$ ($69.2614\%$).*
 
 ### 2. 9-Feature Predictor Matrix
@@ -75,15 +77,18 @@ $$\hat{\sigma}_{t+1} = \min\left( \text{LightGBM}(X_{t-1}), \text{EVT\_Cap} \rig
 - **Alternative Sentiment Signals**: `real_sent_compound`, `real_neg_ratio`, `real_sent_vol_inter`
 
 ### 3. Filtered Historical Simulation (FHS) VaR & Expected Shortfall (CVaR)
-$$\text{VaR}_{0.95}(P) = -\text{Quantile}_{0.05}\left( \left\{ \sum w_i \cdot \hat{\sigma}_{i,t+1} \cdot e_{i,\tau} \right\}_{\tau=1}^T \right) \times P_{\text{portfolio}}$$
-$$\text{CVaR}_{0.95}(P) = \mathbb{E}\left[ L \mid L \ge \text{VaR}_{0.95}(P) \right]$$
+
+$$\text{VaR}_{0.95}(P) = -\text{Quantile}_{0.05} \left( \left\{ \sum w_i \cdot \hat{\sigma}_{i,t+1} \cdot e_{i,\tau} \right\}_{\tau=1}^T \right) \times P_{\text{portfolio}}$$
+
+$$\text{CVaR}_{0.95}(P) = \mathbb{E} \left[ L \mid L \ge \text{VaR}_{0.95}(P) \right]$$
 
 ---
 
 ## 🧪 Regulatory Backtesting & Basel III Certification
 
 Model reliability is validated using the **Kupiec Likelihood Ratio (LR) Test** over out-of-sample backtest periods:
-$$\text{LR}_{\text{POF}} = -2 \ln \left[ \frac{(1-\alpha)^{N-x} \alpha^x}{(1-p)^{N-x} p^x} \right] \sim \chi^2(1)$$
+
+$$\text{LR}_{\text{POF}} = -2 \ln \left[ \frac{(1-\alpha)^{N-x} \cdot \alpha^x}{(1-p)^{N-x} \cdot p^x} \right] \sim \chi^2(1)$$
 
 - **Expected Violations at 95% Confidence**: $5\%$ ($10.25$ breaches per $205$ days).
 - **Actual Violations**: $11$ breaches ($4.71\%$).
