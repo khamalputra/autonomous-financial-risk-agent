@@ -153,9 +153,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const refreshIcon = document.querySelector('.icon-btn i.fa-rotate');
         if (refreshIcon) refreshIcon.classList.add('fa-spin');
         
+        const ticker = tickerSelect ? tickerSelect.value : 'AAPL';
         showLoader(true, `Analyzing Market Risk for ${ticker}...`, 'Running LightGBM Volatility Model & Sentiment Scoring');
 
-        const ticker = tickerSelect ? tickerSelect.value : 'AAPL';
         let portfolioValue = 1000000;
         if (portfolioInput && portfolioInput.value) {
             const rawVal = parseFloat(portfolioInput.value.replace(/,/g, ''));
