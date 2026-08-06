@@ -71,7 +71,7 @@ Daily asset log-returns $r_t = \ln(P_t / P_{t-1})$ are modeled via GARCH(1,1) st
 \hat{\sigma}_{t+1} = \min(\text{LightGBM}(X_{t-1}), \text{EVT Cap})
 ```
 
-*Where $\text{EVT Cap} = 0.692614434576625$ ($69.2614\%$).*
+*Where **EVT Cap** = `0.692614434576625` (or **69.2614%**).*
 
 ### 2. 9-Feature Predictor Matrix
 - **Return & Volatility Proxies**: `return_lag1`, `vol_7d`, `vol_14d`, `vol_30d`
