@@ -1,9 +1,11 @@
 import io
+import os
 from datetime import datetime
 from reportlab.lib.pagesizes import letter
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, HRFlowable
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, HRFlowable, Image as RLImage
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib import colors
+from app.core.config import settings
 
 class PDFReportGenerator:
     """Generates institutional Basel III Market Risk Audit PDF Reports."""
@@ -27,20 +29,20 @@ class PDFReportGenerator:
             'DocTitle',
             parent=styles['Heading1'],
             fontName='Helvetica-Bold',
-            fontSize=20,
-            leading=24,
+            fontSize=18,
+            leading=22,
             textColor=colors.HexColor('#0F172A'),
-            spaceAfter=4
+            spaceAfter=2
         )
         
         subtitle_style = ParagraphStyle(
             'DocSubTitle',
             parent=styles['Normal'],
             fontName='Helvetica',
-            fontSize=10,
-            leading=12,
+            fontSize=9,
+            leading=11,
             textColor=colors.HexColor('#64748B'),
-            spaceAfter=14
+            spaceAfter=0
         )
 
         section_heading = ParagraphStyle(
@@ -74,9 +76,28 @@ class PDFReportGenerator:
 
         elements = []
 
-        # Document Header Banner
-        elements.append(Paragraph("INSTITUTIONAL MARKET RISK COMPLIANCE AUDIT", title_style))
-        elements.append(Paragraph(f"Basel III Regulatory Backtesting & Value-at-Risk Audit • Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S UTC')}", subtitle_style))
+        # Document Header Banner with Brand Shield Logo
+        header_text = [
+            Paragraph("INSTITUTIONAL MARKET RISK COMPLIANCE AUDIT", title_style),
+            Paragraph(f"Basel III Regulatory Backtesting & Value-at-Risk Audit • Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S UTC')}", subtitle_style)
+        ]
+
+        logo_path = os.path.join(settings.BASE_DIR, "static", "icons", "icon-192.png")
+        if os.path.exists(logo_path):
+            logo_img = RLImage(logo_path, width=44, height=44)
+            header_table = Table([[logo_img, header_text]], colWidths=[52, 488])
+            header_table.setStyle(TableStyle([
+                ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+                ('LEFTPADDING', (0, 0), (-1, -1), 0),
+                ('RIGHTPADDING', (0, 0), (-1, -1), 0),
+                ('TOPPADDING', (0, 0), (-1, -1), 0),
+                ('BOTTOMPADDING', (0, 0), (-1, -1), 2),
+            ]))
+            elements.append(header_table)
+        else:
+            elements.extend(header_text)
+
+        elements.append(Spacer(1, 6))
         elements.append(HRFlowable(width="100%", thickness=1.5, color=colors.HexColor('#2563EB'), spaceAfter=14))
 
         # Executive Summary Table
