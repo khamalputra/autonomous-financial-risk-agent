@@ -1,3 +1,4 @@
+import os
 from fastapi import APIRouter, HTTPException, Query, Response
 from typing import List, Dict, Any
 from datetime import datetime
@@ -33,10 +34,13 @@ async def export_risk_pdf(request: RiskAnalysisRequest):
         )
         pdf_bytes = PDFReportGenerator.generate_risk_report(risk_data)
         
+        # Archive a copy to reports/ directory
         reports_dir = os.path.join(settings.BASE_DIR, "reports")
         os.makedirs(reports_dir, exist_ok=True)
         filename = f"Risk_Intelligence_Report_{request.ticker}_{datetime.now().strftime('%Y-%m-%d')}.pdf"
         filepath = os.path.join(reports_dir, filename)
+        with open(filepath, "wb") as f:
+            f.write(pdf_bytes)
         
         return Response(
             content=pdf_bytes,
