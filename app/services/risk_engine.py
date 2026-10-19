@@ -95,25 +95,52 @@ class RiskEngineService:
         return fallback_df
 
     def fetch_live_news_sentiment(self, tickers=None):
-        """Fetches live news headlines and computes VADER sentiment scores."""
+        """Fetches live news headlines and computes VADER sentiment scores using yf.Search."""
         if tickers is None:
             tickers = settings.SUPPORTED_TICKERS
+        
+        fallback_keywords = {
+            'BTC-USD': 'Bitcoin',
+            'ETH-USD': 'Ethereum'
+        }
+        
         records = []
         for t in tickers:
             try:
-                t_obj = yf.Ticker(t)
-                news_items = t_obj.news
+                # Use yf.Search for reliable news retrieval in recent yfinance versions
+                search_query = t
+                s = yf.Search(search_query, news_count=5)
+                news_items = s.news or []
+                
+                # If no items returned and asset has a fallback keyword (e.g. crypto pairs), try fallback
+                if not news_items and t in fallback_keywords:
+                    s = yf.Search(fallback_keywords[t], news_count=5)
+                    news_items = s.news or []
+                
+                # Fallback to Ticker.news if Search returned empty
+                if not news_items:
+                    t_obj = yf.Ticker(t)
+                    news_items = t_obj.news or []
+                
                 if news_items:
                     for item in news_items[:5]:
                         content = item.get('content', {})
                         title = content.get('title', item.get('title', ''))
-                        pub_date_str = content.get('pubDate', item.get('providerPublishTime', ''))
+                        pub_time = item.get('providerPublishTime')
+                        if pub_time:
+                            try:
+                                pub_date_str = datetime.fromtimestamp(pub_time).strftime('%Y-%m-%d %H:%M')
+                            except Exception:
+                                pub_date_str = str(pub_time)
+                        else:
+                            pub_date_str = str(content.get('pubDate', ''))
+                            
                         if title:
                             score = self.sia.polarity_scores(title)
                             records.append({
                                 'ticker': t,
                                 'title': title,
-                                'pub_date': str(pub_date_str),
+                                'pub_date': pub_date_str,
                                 'compound': float(score['compound']),
                                 'pos': float(score['pos']),
                                 'neg': float(score['neg']),
